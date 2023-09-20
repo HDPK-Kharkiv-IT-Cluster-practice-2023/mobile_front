@@ -1,1 +1,3 @@
-# mobile_front
+# fightingapp
+
+A new Flutter project.
