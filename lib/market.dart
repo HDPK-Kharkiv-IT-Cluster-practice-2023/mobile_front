@@ -8,9 +8,9 @@ class Market extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Market'),
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
+        titleTextStyle: null,
         actions: const <Widget>[],
-        backgroundColor: const Color.fromARGB(255, 221, 221, 221),
+        backgroundColor: null,
         bottomOpacity: 0.0,
         elevation: 0.0,
       ),

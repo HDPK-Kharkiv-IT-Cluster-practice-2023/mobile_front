@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'themes.dart';
 
 void main() => runApp(const AppBarApp());
 
@@ -8,7 +9,9 @@ class AppBarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: lightTheme, // Set the default theme to light.
+      darkTheme: ThemeData.dark(), // Set the dark theme.
       home: FightingAction(),
     );
   }
@@ -23,9 +26,9 @@ class FightingAction extends StatelessWidget {
       appBar: AppBar(
         key: key,
         title: const Text('Kick'),
-        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
+        titleTextStyle: null,
         actions: const <Widget>[],
-        backgroundColor: const Color.fromARGB(255, 221, 221, 221),
+        backgroundColor: null,
         bottomOpacity: 0.0,
         elevation: 0.0,
       ),

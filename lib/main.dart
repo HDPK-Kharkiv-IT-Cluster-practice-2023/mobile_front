@@ -1,5 +1,6 @@
 import 'package:fightingapp/customicons.dart';
 import 'package:fightingapp/skills.dart';
+import 'package:fightingapp/themes.dart';
 import 'package:flutter/material.dart';
 import 'fighting_action.dart';
 import 'market.dart';
@@ -16,6 +17,9 @@ class NavigationBarApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: lightTheme,
+      darkTheme: ThemeData.dark(),
+
       home: NavigationExample(),
       debugShowCheckedModeBanner: false, // Set this to false
     );
@@ -36,6 +40,8 @@ class _NavigationExampleState extends State<NavigationExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: NavigationBar(
+        backgroundColor:
+            Theme.of(context).bottomNavigationBarTheme.backgroundColor,
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
@@ -53,15 +59,17 @@ class _NavigationExampleState extends State<NavigationExample> {
             label: 'Mob Farm',
           ),
           NavigationDestination(
-            icon: Icon(Icons.storefront),
+            icon: Icon(Icons.storefront,
+                color: Theme.of(context).iconTheme.color),
             label: 'Market',
           ),
           NavigationDestination(
-            icon: Icon(Icons.toll),
+            icon: Icon(Icons.toll, color: Theme.of(context).iconTheme.color),
             label: 'Skills',
           ),
           NavigationDestination(
-            icon: Icon(Icons.settings),
+            icon:
+                Icon(Icons.settings, color: Theme.of(context).iconTheme.color),
             label: 'Settings',
           ),
         ],
