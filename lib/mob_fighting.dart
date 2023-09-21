@@ -16,7 +16,7 @@ class FightingMobs extends StatelessWidget {
         elevation: 0.0,
       ),
       body: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
         child: Column(
           key: key,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -28,7 +28,7 @@ class FightingMobs extends StatelessWidget {
               child: Stack(
                 children: [
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 10, 292, 0),
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 292, 0),
                     child: CircularPercentIndicator(
                       radius: 40.0,
                       lineWidth: 13.0,
@@ -40,7 +40,7 @@ class FightingMobs extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 7, 0, 20),
                     child: Row(children: [
                       CircleAvatar(
                         backgroundImage: AssetImage("assets/character2.png"),
@@ -84,7 +84,7 @@ class FightingMobs extends StatelessWidget {
               child: Stack(
                 children: [
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 10, 292, 0),
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 13, 293, 0),
                     child: CircularPercentIndicator(
                       radius: 40.0,
                       lineWidth: 13.0,
@@ -132,7 +132,7 @@ class FightingMobs extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.bottomCenter,
-              padding: EdgeInsetsDirectional.fromSTEB(0, 65, 0, 0),
+              padding: EdgeInsetsDirectional.fromSTEB(0, 43, 0, 0),
               child: FilledButton(
                 onPressed: () {},
                 style: FilledButton.styleFrom(

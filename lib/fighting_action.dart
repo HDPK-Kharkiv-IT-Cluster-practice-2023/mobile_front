@@ -32,143 +32,155 @@ class FightingAction extends StatelessWidget {
         bottomOpacity: 0.0,
         elevation: 0.0,
       ),
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          key: key,
+      body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              // Character1 avatar, Name, Healthbar padding.
-              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-              child: Stack(
+              padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+              child: Column(
+                key: key,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 10, 292, 0),
-                    child: CircularPercentIndicator(
-                      radius: 40.0,
-                      lineWidth: 13.0,
-                      animation: true,
-                      percent: 0.8,
-                      circularStrokeCap: CircularStrokeCap.round,
-                      progressColor: Color.fromARGB(255, 144, 218, 146),
-                      backgroundColor: const Color.fromARGB(255, 255, 151, 144),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
-                    child: Row(children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage("assets/character2.png"),
-                        radius: 30,
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                    child: Stack(children: [
+                      CircularPercentIndicator(
+                        radius: 40.0,
+                        lineWidth: 13.0,
+                        animation: true,
+                        percent: 0.65,
+                        circularStrokeCap: CircularStrokeCap.round,
+                        progressColor: Color.fromARGB(255, 144, 218, 146),
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 151, 144),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Text(
-                          'Shane Cervantes',
-                          style: TextStyle(fontSize: 26),
+                        padding: EdgeInsetsDirectional.fromSTEB(10, 7, 0, 0),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundImage:
+                                  AssetImage("assets/character2.png"),
+                              radius: 30,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(15),
+                              child: Text(
+                                'Shane Cervantes',
+                                style: TextStyle(fontSize: 26),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
+                      )
                     ]),
+                  ),
+                  Text(
+                    'Level: 20, XP: 65',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Health: 80, Armor: 15',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Attack: 12, Crit: 24',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Luck: 6',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Balance: 100 \$',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Padding(
+                    // Character2 avatar, Name, Healthbar padding.
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                          child: Stack(children: [
+                            CircularPercentIndicator(
+                              radius: 40.0,
+                              lineWidth: 13.0,
+                              animation: true,
+                              percent: 0.65,
+                              circularStrokeCap: CircularStrokeCap.round,
+                              progressColor: Color.fromARGB(255, 144, 218, 146),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 255, 151, 144),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(10, 7, 0, 0),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage("assets/character1.png"),
+                                    radius: 30,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Text(
+                                      'Ashley Ho',
+                                      style: TextStyle(fontSize: 26),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    'Level: 16, XP: 45',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Health: 65, Armor: 10',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Attack: 16, Crit: 16',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Luck: 3',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Balance: 200 \$',
+                    style: TextStyle(fontSize: 20),
                   ),
                 ],
               ),
             ),
-            Text(
-              'Level: 20, XP: 65',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Health: 80, Armor: 15',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Attack: 12, Crit: 24',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Luck: 6',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Balance: 100 \$',
-              style: TextStyle(fontSize: 20),
-            ),
-            Padding(
-              // Character2 avatar, Name, Healthbar padding.
-              padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 10, 292, 0),
-                    child: CircularPercentIndicator(
-                      radius: 40.0,
-                      lineWidth: 13.0,
-                      animation: true,
-                      percent: 0.65,
-                      circularStrokeCap: CircularStrokeCap.round,
-                      progressColor: Color.fromARGB(255, 144, 218, 146),
-                      backgroundColor: const Color.fromARGB(255, 255, 151, 144),
+            Column(
+              children: [
+                Container(
+                  child: FilledButton(
+                    onPressed: () {},
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Color.fromARGB(
+                          255, 253, 231, 255), // Background color
+                    ),
+                    child: const Text(
+                      'Fight!',
+                      style: TextStyle(fontSize: 18, color: Colors.purple),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
-                    child: Row(children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage("assets/character1.png"),
-                        radius: 30,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Text(
-                          'Ashley Ho',
-                          style: TextStyle(fontSize: 26),
-                        ),
-                      ),
-                    ]),
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              'Level: 16, XP: 45',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Health: 65, Armor: 10',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Attack: 16, Crit: 16',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Luck: 3',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Balance: 200 \$',
-              style: TextStyle(fontSize: 20),
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              padding: EdgeInsetsDirectional.fromSTEB(0, 40, 0, 0),
-              child: FilledButton(
-                onPressed: () {},
-                style: FilledButton.styleFrom(
-                  backgroundColor:
-                      Color.fromARGB(255, 253, 231, 255), // Background color
                 ),
-                child: const Text(
-                  'Fight!',
-                  style: TextStyle(fontSize: 18, color: Colors.purple),
-                ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ]),
     );
   }
 }
