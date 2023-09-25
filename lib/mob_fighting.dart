@@ -1,148 +1,161 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'fetch_character.dart';
 
-class FightingMobs extends StatelessWidget {
-  const FightingMobs({super.key});
+class FightingMobs extends StatefulWidget {
+  const FightingMobs({Key? key}) : super(key: key);
+
+  @override
+  _FightingMobsState createState() => _FightingMobsState();
+}
+
+class _FightingMobsState extends State<FightingMobs> {
+  Map<String, dynamic> character1Data = {};
+  Map<String, dynamic> character2Data = {};
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData().then((data) {
+      setState(() {
+        character1Data = data['character1Data'];
+        character2Data = data['character2Data'];
+      });
+    }).catchError((error) {
+      // Обработка ошибки, если необходимо
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mob Farm'),
-        titleTextStyle: null,
         actions: const <Widget>[],
-        backgroundColor: null,
+        backgroundColor: Colors.transparent,
         bottomOpacity: 0.0,
         elevation: 0.0,
       ),
       body: Container(
-        padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
         child: Column(
-          key: key,
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              // Character1 avatar, Name, Healthbar padding.
-              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Stack(
                 children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 292, 0),
-                    child: CircularPercentIndicator(
-                      radius: 40.0,
-                      lineWidth: 13.0,
-                      animation: true,
-                      percent: 0.8,
-                      circularStrokeCap: CircularStrokeCap.round,
-                      progressColor: Color.fromARGB(255, 144, 218, 146),
-                      backgroundColor: const Color.fromARGB(255, 255, 151, 144),
-                    ),
+                  CircularPercentIndicator(
+                    radius: 40.0,
+                    lineWidth: 13.0,
+                    animation: true,
+                    percent: 0.8,
+                    circularStrokeCap: CircularStrokeCap.round,
+                    progressColor: Color.fromARGB(255, 144, 218, 146),
+                    backgroundColor: const Color.fromARGB(255, 255, 151, 144),
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 7, 0, 20),
-                    child: Row(children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage("assets/character2.png"),
-                        radius: 30,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Text(
-                          'Shane Cervantes',
-                          style: TextStyle(fontSize: 26),
+                    padding: const EdgeInsets.only(left: 10, top: 7),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage("assets/character2.png"),
+                          radius: 30,
                         ),
-                      ),
-                    ]),
-                  ),
+                        Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Text(
+                            character1Data['name'] ?? 'N/A', // Используем данные
+                            style: TextStyle(fontSize: 26),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
             Text(
-              'Level: 20, XP: 65',
+              'Level: ${character1Data['level'] ?? 'N/A'}, XP: ${character1Data['xp'] ?? 0}',
               style: TextStyle(fontSize: 20),
             ),
             Text(
-              'Health: 80, Armor: 15',
+              'Health: ${character1Data['health'] ?? 'N/A'}, Armor: ${character1Data['armor'] ?? 0}',
               style: TextStyle(fontSize: 20),
             ),
             Text(
-              'Attack: 12, Crit: 24',
+              'Attack: ${character1Data['attack'] ?? 'N/A'}, Crit: ${character1Data['critical_attack'] ?? 0}',
               style: TextStyle(fontSize: 20),
             ),
             Text(
-              'Luck: 6',
+              'Luck: ${character1Data['luck'] ?? 'N/A'}',
               style: TextStyle(fontSize: 20),
             ),
             Text(
-              'Balance: 100 \$',
+              'Balance: \$${character1Data['balance'] ?? 'N/A'}',
               style: TextStyle(fontSize: 20),
             ),
             Padding(
-              // Mob avatar, Name, Healthbar padding.
-              padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+              padding: const EdgeInsets.only(top: 20),
               child: Stack(
                 children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 13, 293, 0),
-                    child: CircularPercentIndicator(
-                      radius: 40.0,
-                      lineWidth: 13.0,
-                      animation: true,
-                      percent: 0.25,
-                      circularStrokeCap: CircularStrokeCap.round,
-                      progressColor: Color.fromARGB(255, 144, 218, 146),
-                      backgroundColor: const Color.fromARGB(255, 255, 151, 144),
-                    ),
+                  CircularPercentIndicator(
+                    radius: 40.0,
+                    lineWidth: 13.0,
+                    animation: true,
+                    percent: 0.25,
+                    circularStrokeCap: CircularStrokeCap.round,
+                    progressColor: Color.fromARGB(255, 144, 218, 146),
+                    backgroundColor: const Color.fromARGB(255, 255, 151, 144),
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
-                    child: Row(children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage("assets/skeleton.png"),
-                        radius: 30,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Text(
-                          'Skeleton',
-                          style: TextStyle(fontSize: 26),
+                    padding: const EdgeInsets.only(left: 10, top: 20),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage("assets/skeleton.png"),
+                          radius: 30,
                         ),
-                      ),
-                    ]),
-                  ),
+                        Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Text(
+                            'Skeleton',
+                            style: TextStyle(fontSize: 26),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
             Text(
-              'Level: 16, XP: 45',
+              'Level: ${character2Data['level'] ?? 'N/A'}, XP: ${character2Data['xp'] ?? 0}',
               style: TextStyle(fontSize: 20),
             ),
             Text(
-              'Health: 25, Armor: 10',
+              'Health: ${character2Data['health'] ?? 'N/A'}, Armor: ${character2Data['armor'] ?? 0}',
               style: TextStyle(fontSize: 20),
             ),
             Text(
-              'Attack: 16, Crit: 16',
+              'Attack: ${character2Data['attack'] ?? 'N/A'}, Crit: ${character2Data['critical_attack'] ?? 0}',
               style: TextStyle(fontSize: 20),
             ),
             Text(
-              'Luck: 3',
+              'Luck: ${character2Data['luck'] ?? 'N/A'}',
               style: TextStyle(fontSize: 20),
             ),
             Container(
               alignment: Alignment.bottomCenter,
-              padding: EdgeInsetsDirectional.fromSTEB(0, 43, 0, 0),
-              child: FilledButton(
+              padding: const EdgeInsets.only(top: 43),
+              child: ElevatedButton(
                 onPressed: () {},
-                style: FilledButton.styleFrom(
-                  backgroundColor:
-                      Color.fromARGB(255, 191, 254, 207), // Background color
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 191, 254, 207),
                 ),
                 child: const Text(
                   'Fight mob!',
-                  style: TextStyle(
-                      fontSize: 18, color: Color.fromARGB(255, 55, 133, 58)),
+                  style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 55, 133, 58)),
                 ),
               ),
             ),
