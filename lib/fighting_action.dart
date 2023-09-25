@@ -1,31 +1,91 @@
+// ignore_for_file: unnecessary_null_comparison
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:percent_indicator/percent_indicator.dart';
-import 'themes.dart';
+import 'fetch_character.dart';
 
-void main() => runApp(const AppBarApp());
-
-class AppBarApp extends StatelessWidget {
-  const AppBarApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: lightTheme, // Set the default theme to light.
-      darkTheme: ThemeData.dark(), // Set the dark theme.
-      home: FightingAction(),
-    );
-  }
-}
-
-class FightingAction extends StatelessWidget {
+class FightingAction extends StatefulWidget {
   const FightingAction({super.key});
 
   @override
+  _FightingActionState createState() => _FightingActionState();
+}
+
+class _FightingActionState extends State<FightingAction> {
+  Map<String, dynamic> character1Data = {};
+  Map<String, dynamic> character2Data = {};
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData().then((data) {
+      setState(() {
+        character1Data = data['character1Data'];
+        character2Data = data['character2Data'];
+      });
+    }).catchError((error) {
+      // Обработка ошибки, если необходимо
+    });
+  }
+
+  // NEW CODE
+  Future<void> fight() async {
+    final url = Uri.parse('http://127.0.0.1:5000/fight_character');
+    final postData = {
+      'c1damage': 'damage',
+      // Замените 'damage' на фактический урон, который вы хотите отправить
+    };
+
+    final response = await http.post(
+      url,
+      body: postData,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    );
+
+    if (response.statusCode == 200) {
+      // Обработайте успешный ответ, если необходимо
+
+      // После боя, обновите характеристики персонажей
+      try {
+        final updatedData = await fetchData();
+        setState(() {
+          character1Data = updatedData['character1Data'];
+          character2Data = updatedData['character2Data'];
+        });
+      } catch (error) {
+        // Обработка ошибки, если необходимо
+      }
+    } else {
+      // Обработайте ошибку, если необходимо
+    }
+  }
+
+//NEW CODE
+  @override
   Widget build(BuildContext context) {
+    var character1Hp =
+        character1Data != null ? character1Data['health'] ?? 0 : 0;
+
+    var character2Hp =
+        character2Data != null ? character2Data['health'] ?? 0 : 0;
+
+    var winner = "";
+
+    var buttonIsDisabled = false;
+
+    if (character1Data['health'] != null && character1Data['health'] <= 0) {
+      winner = character2Data['name'];
+      buttonIsDisabled = true;
+    }
+
+    if (character2Data['health'] != null && character2Data['health'] <= 0) {
+      winner = character1Data['name'];
+      buttonIsDisabled = true;
+    }
+
     return Scaffold(
       appBar: AppBar(
-        key: key,
-        title: const Text('Kick'),
+        title: const Text('PvP'),
         titleTextStyle: null,
         actions: const <Widget>[],
         backgroundColor: null,
@@ -39,7 +99,6 @@ class FightingAction extends StatelessWidget {
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
               child: Column(
-                key: key,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -49,8 +108,8 @@ class FightingAction extends StatelessWidget {
                       CircularPercentIndicator(
                         radius: 40.0,
                         lineWidth: 13.0,
-                        animation: true,
-                        percent: 0.65,
+                        animation: false,
+                        percent: character1Hp >= 0 ? character1Hp / 100 : 0,
                         circularStrokeCap: CircularStrokeCap.round,
                         progressColor: Color.fromARGB(255, 144, 218, 146),
                         backgroundColor:
@@ -68,7 +127,9 @@ class FightingAction extends StatelessWidget {
                             Padding(
                               padding: EdgeInsets.all(15),
                               child: Text(
-                                'Shane Cervantes',
+                                character1Data != null
+                                    ? character1Data['name'] ?? 'N/A'
+                                    : 'N/A',
                                 style: TextStyle(fontSize: 26),
                               ),
                             ),
@@ -78,23 +139,19 @@ class FightingAction extends StatelessWidget {
                     ]),
                   ),
                   Text(
-                    'Level: 20, XP: 65',
+                    'Level: ${character1Data != null ? character1Data['level'] ?? 'N/A' : 'N/A'}, XP: ${character1Data != null ? character1Data['xp'] ?? 'N/A' : 'N/A'}',
                     style: TextStyle(fontSize: 20),
                   ),
                   Text(
-                    'Health: 80, Armor: 15',
+                    'Health: ${character1Data != null ? character1Data['health'] ?? 'N/A' : 'N/A'}, Armor: ${character1Data != null ? character1Data['armor'] ?? 'N/A' : 'N/A'}',
                     style: TextStyle(fontSize: 20),
                   ),
                   Text(
-                    'Attack: 12, Crit: 24',
+                    'Attack: ${character1Data != null ? character1Data['attack'] ?? 'N/A' : 'N/A'}, Crit: ${character1Data != null ? character1Data['critical_attack'] ?? 'N/A' : 'N/A'}',
                     style: TextStyle(fontSize: 20),
                   ),
                   Text(
-                    'Luck: 6',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  Text(
-                    'Balance: 100 \$',
+                    'Luck: ${character1Data != null ? character1Data['luck'] ?? 'N/A' : 'N/A'}, Balance: ${character1Data != null ? character1Data['balance'] ?? 'N/A' : 'N/A'} \$',
                     style: TextStyle(fontSize: 20),
                   ),
                   Padding(
@@ -108,8 +165,9 @@ class FightingAction extends StatelessWidget {
                             CircularPercentIndicator(
                               radius: 40.0,
                               lineWidth: 13.0,
-                              animation: true,
-                              percent: 0.65,
+                              animation: false,
+                              percent:
+                                  character2Hp >= 0 ? character2Hp / 100 : 0,
                               circularStrokeCap: CircularStrokeCap.round,
                               progressColor: Color.fromARGB(255, 144, 218, 146),
                               backgroundColor:
@@ -128,7 +186,9 @@ class FightingAction extends StatelessWidget {
                                   Padding(
                                     padding: EdgeInsets.all(15),
                                     child: Text(
-                                      'Ashley Ho',
+                                      character2Data != null
+                                          ? character2Data['name'] ?? 'N/A'
+                                          : 'N/A',
                                       style: TextStyle(fontSize: 26),
                                     ),
                                   ),
@@ -141,23 +201,19 @@ class FightingAction extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Level: 16, XP: 45',
+                    'Level: ${character2Data != null ? character2Data['level'] ?? 'N/A' : 'N/A'}, XP: ${character2Data != null ? character2Data['xp'] ?? 'N/A' : 'N/A'}',
                     style: TextStyle(fontSize: 20),
                   ),
                   Text(
-                    'Health: 65, Armor: 10',
+                    'Health: ${character2Data != null ? character2Data['health'] ?? 'N/A' : 'N/A'}, Armor: ${character2Data != null ? character2Data['armor'] ?? 'N/A' : 'N/A'}',
                     style: TextStyle(fontSize: 20),
                   ),
                   Text(
-                    'Attack: 16, Crit: 16',
+                    'Attack: ${character2Data != null ? character2Data['attack'] ?? 'N/A' : 'N/A'}, Crit: ${character2Data != null ? character2Data['critical_attack'] ?? 'N/A' : 'N/A'}',
                     style: TextStyle(fontSize: 20),
                   ),
                   Text(
-                    'Luck: 3',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  Text(
-                    'Balance: 200 \$',
+                    'Luck: ${character2Data != null ? character2Data['luck'] ?? 'N/A' : 'N/A'}, Balance: ${character2Data != null ? character2Data['balance'] ?? 'N/A' : 'N/A'} \$',
                     style: TextStyle(fontSize: 20),
                   ),
                 ],
@@ -167,14 +223,45 @@ class FightingAction extends StatelessWidget {
               children: [
                 Container(
                   child: FilledButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (!buttonIsDisabled) {
+                        // Show the AlertDialog when the button is pressed
+                        fight();
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('${winner} wins'),
+                              content: const Text('The game is now over'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, 'New Game');
+                                  },
+                                  child: const Text('New Game'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, 'OK');
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
                     style: FilledButton.styleFrom(
-                      backgroundColor: Color.fromARGB(
-                          255, 253, 231, 255), // Background color
+                      backgroundColor: Color.fromARGB(255, 253, 231, 255),
                     ),
-                    child: const Text(
-                      'Fight!',
-                      style: TextStyle(fontSize: 18, color: Colors.purple),
+                    child: Text(
+                      buttonIsDisabled ? 'Game over' : 'Fight!',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: buttonIsDisabled ? Colors.red : Colors.purple,
+                      ),
                     ),
                   ),
                 ),

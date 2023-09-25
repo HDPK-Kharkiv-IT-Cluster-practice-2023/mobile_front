@@ -1,6 +1,5 @@
 import 'package:fightingapp/customicons.dart';
 import 'package:fightingapp/skills.dart';
-import 'package:fightingapp/themes.dart';
 import 'package:flutter/material.dart';
 import 'fighting_action.dart';
 import 'market.dart';
