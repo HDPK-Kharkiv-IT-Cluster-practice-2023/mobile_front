@@ -1,38 +1,35 @@
+import 'fetch_character.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'fighting_action.dart';
 
-final character1Url = 'http://127.0.0.1:5000/character1';
-final character2Url = 'http://127.0.0.1:5000/character2';
+final mobURL = 'http://127.0.0.1:5000/mob';
 
-class Character {
-  String name;
+class Mob {
   int level;
   int xp;
+  String name;
   int health;
   int armor;
   int attack;
   int luck;
-  int balance;
   bool alive;
-  int criticalAttack;
+  double criticalAttack;
 
-  Character({
-    required this.name,
+  Mob({
     required this.level,
     required this.xp,
+    required this.name,
     required this.health,
     required this.armor,
     required this.attack,
     required this.luck,
-    required this.balance,
     required this.alive,
     required this.criticalAttack,
   });
-
-  factory Character.fromJson(Map<String, dynamic> json) {
-    return Character(
+  factory Mob.fromJson(Map<String, dynamic> json) {
+    return Mob(
       name: json['name'] ?? 'N/A', // Provide a default value for 'name'
       level:
           json['level'] as int? ?? 0, // Provide a default value and cast to int
@@ -45,25 +42,22 @@ class Character {
           0, // Provide a default value and cast to int
       luck:
           json['luck'] as int? ?? 0, // Provide a default value and cast to int
-      balance: json['balance'] as int? ??
-          0, // Provide a default value and cast to int
       alive: json['alive'] as bool? ??
           false, // Provide a default value and cast to bool
-      criticalAttack: json['critical_attack'] as int? ??
-          0, // Provide a default value and cast to int
+      criticalAttack: json['criticalAttack'] as double? ??
+          0.0, // Provide a default value and cast to double
     );
   }
 }
 
-Character? character1;
-Character? character2;
+Mob? mob;
 
-Future<Character?> fetchCharacter(String url) async {
+Future<Mob?> fetchMob(String url) async {
   final response = await HttpClient().getUrl(Uri.parse(url));
   final httpResponse = await response.close();
   final responseBody = await utf8.decodeStream(httpResponse);
 
   final Map<String, dynamic> jsonData = json.decode(responseBody);
 
-  return Character.fromJson(jsonData);
+  return Mob.fromJson(jsonData);
 }
