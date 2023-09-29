@@ -90,27 +90,20 @@ class _FightingActionState extends State<FightingAction> {
       );
 
       if (response.statusCode == 200) {
-        // Handle a successful response, if needed
-
-        // After the fight, update character data
         try {
           character1 = await fetchCharacter(character1Url);
         } catch (error) {
-          // Handle the error, if needed
           print('Error updating character data: $error');
         }
         try {
           character2 = await fetchCharacter(character2Url);
         } catch (error) {
-          // Handle the error, if needed
           print('Error updating character data: $error');
         }
       } else {
-        // Handle the error, if needed
         print('Error during fight: HTTP ${response.statusCode}');
       }
     } catch (error) {
-      // Handle any network-related errors, if needed
       print('Network error during fight: $error');
     }
     await fetchCharacters();
@@ -154,29 +147,34 @@ class _FightingActionState extends State<FightingAction> {
         elevation: 0.0,
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 7),
+            padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                  // Character1 avatar, Name, Healthbar padding.
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                   child: Stack(children: [
-                    CircularPercentIndicator(
-                      radius: 40.0,
-                      lineWidth: 13.0,
-                      animation: false,
-                      percent: character1Hp >= 0 ? character1Hp / 100 : 0,
-                      circularStrokeCap: CircularStrokeCap.round,
-                      progressColor: Color.fromARGB(255, 144, 218, 146),
-                      backgroundColor: const Color.fromARGB(255, 255, 151, 144),
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 3, 0, 0),
+                      child: CircularPercentIndicator(
+                        radius: 40.0,
+                        lineWidth: 13.0,
+                        animation: false,
+                        percent: character1Hp >= 0 ? character1Hp / 100 : 0,
+                        circularStrokeCap: CircularStrokeCap.round,
+                        progressColor: Color.fromARGB(255, 144, 218, 146),
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 151, 144),
+                      ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 7, 0, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
                       child: Row(
                         children: [
                           CircleAvatar(
@@ -185,12 +183,26 @@ class _FightingActionState extends State<FightingAction> {
                             radius: 30,
                           ),
                           Padding(
-                            padding: EdgeInsets.all(15),
-                            child: Text(
-                              character1 != null ? character1!.name : 'N/A',
-                              style: TextStyle(fontSize: 26),
-                            ),
-                          ),
+                              padding: EdgeInsets.all(15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    character1 != null
+                                        ? character1!.name
+                                        : 'N/A',
+                                    style: TextStyle(fontSize: 26),
+                                  ),
+                                  LinearPercentIndicator(
+                                    width: 100.0,
+                                    lineHeight: 8.0,
+                                    percent: 0.6,
+                                    leading: new Text("Lvl ${currentLvl}"),
+                                    trailing: new Text("Lvl ${currentLvl + 1}"),
+                                    progressColor: Colors.orange,
+                                  ),
+                                ],
+                              )),
                         ],
                       ),
                     )
@@ -218,7 +230,7 @@ class _FightingActionState extends State<FightingAction> {
                   child: Stack(
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                         child: Stack(children: [
                           CircularPercentIndicator(
                             radius: 40.0,
@@ -276,54 +288,54 @@ class _FightingActionState extends State<FightingAction> {
               ],
             ),
           ),
-          Column(
-            children: [
-              Container(
-                child: FilledButton(
-                  onPressed: () {
-                    if (!buttonIsDisabled) {
-                      fight();
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('$winner wins'),
-                            content: const Text('The game is now over'),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  initCharacters();
-                                  Navigator.pop(context, 'New Game');
-                                },
-                                child: const Text('New Game'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  initCharacters();
-                                  Navigator.pop(context, 'OK');
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
+          Container(
+            child: FilledButton(
+              onPressed: () {
+                if (!buttonIsDisabled) {
+                  fight();
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('$winner wins'),
+                        content: const Text('The game is now over'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              initCharacters();
+                              Navigator.pop(context, 'New Game');
+                            },
+                            child: const Text('New Game'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              initCharacters();
+                              Navigator.pop(context, 'OK');
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
                       );
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 253, 231, 255),
-                  ),
-                  child: Text(
-                    buttonIsDisabled ? 'Game over' : 'Fight!',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: buttonIsDisabled ? Colors.red : Colors.purple,
-                    ),
-                  ),
+                    },
+                  );
+                }
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: buttonIsDisabled
+                    ? const Color.fromARGB(255, 158, 158, 158)
+                    : Color.fromARGB(255, 253, 231, 255),
+              ),
+              child: Text(
+                buttonIsDisabled ? 'Game over' : 'Fight!',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: buttonIsDisabled
+                      ? Color.fromARGB(255, 255, 17, 0)
+                      : Colors.purple,
                 ),
               ),
-            ],
+            ),
           ),
         ],
       ),

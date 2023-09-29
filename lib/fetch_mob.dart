@@ -1,8 +1,5 @@
-import 'fetch_character.dart';
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'fighting_action.dart';
 
 final mobURL = 'http://127.0.0.1:5000/mob';
 

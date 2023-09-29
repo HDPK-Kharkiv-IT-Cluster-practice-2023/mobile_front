@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'fighting_action.dart';
 
 final character1Url = 'http://127.0.0.1:5000/character1';
 final character2Url = 'http://127.0.0.1:5000/character2';
+
+var currentLvl = 5;
 
 class Character {
   String name;

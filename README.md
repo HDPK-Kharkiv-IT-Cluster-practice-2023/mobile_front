@@ -1,9 +1,12 @@
 # Latest UI
-<img width="471" alt="Screenshot 2023-09-27 at 10 22 41 PM" src="https://github.com/HDPK-Kharkiv-IT-Cluster-practice-2023/mobile_front/assets/139014119/5264e95d-b725-4e64-af9d-635d10b2a02e">
+<img width="483" alt="Screenshot 2023-09-29 at 7 33 45 PM" src="https://github.com/HDPK-Kharkiv-IT-Cluster-practice-2023/mobile_front/assets/139014119/2fb13df9-2f33-4673-85f7-7f1f2aecc042">
+
 
 # Game Over
-<img width="483" alt="Screenshot 2023-09-25 at 8 54 49 PM" src="https://github.com/HDPK-Kharkiv-IT-Cluster-practice-2023/mobile_front/assets/139014119/6186158a-62e2-4cc6-a6a3-8d47af5f30f3">
+<img width="483" alt="Screenshot 2023-09-29 at 7 33 55 PM" src="https://github.com/HDPK-Kharkiv-IT-Cluster-practice-2023/mobile_front/assets/139014119/db8329dc-2c39-4874-b200-c398e0bc45b1">
+
 
 # App Icon
-<img width="471" alt="Screenshot 2023-09-27 at 10 17 55 PM" src="https://github.com/HDPK-Kharkiv-IT-Cluster-practice-2023/mobile_front/assets/139014119/cbd51f17-f1c8-4aba-bacb-9f85c5907765">
+<img width="483" alt="Screenshot 2023-09-29 at 7 34 06 PM" src="https://github.com/HDPK-Kharkiv-IT-Cluster-practice-2023/mobile_front/assets/139014119/9a7c68fd-cafe-4bba-8016-aa6a7c8ae053">
+
 
