@@ -49,27 +49,21 @@ class _FightingActionState extends State<FightingAction> {
       );
 
       if (response.statusCode == 200) {
-        // Handle a successful response, if needed
-
         // After the fight, update character data
         try {
           character1 = await fetchCharacter(character1Url);
         } catch (error) {
-          // Handle the error, if needed
           print('Error updating character data: $error');
         }
         try {
           character2 = await fetchCharacter(character2Url);
         } catch (error) {
-          // Handle the error, if needed
           print('Error updating character data: $error');
         }
       } else {
-        // Handle the error, if needed
         print('Error during fight: HTTP ${response.statusCode}');
       }
     } catch (error) {
-      // Handle any network-related errors, if needed
       print('Network error during fight: $error');
     }
     await fetchCharacters();

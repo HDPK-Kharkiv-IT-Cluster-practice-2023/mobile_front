@@ -1,12 +1,8 @@
-import 'package:fightingapp/customicons.dart';
-import 'package:fightingapp/skills.dart';
 import 'package:flutter/material.dart';
-import 'fighting_action.dart';
-import 'market.dart';
-import 'mob_fighting.dart';
-import 'settings.dart';
-
-/// Flutter code sample for [NavigationBar].
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'fetch_characters.dart';
 
 void main() => runApp(const NavigationBarApp());
 
@@ -18,9 +14,8 @@ class NavigationBarApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
-
       home: NavigationExample(),
-      debugShowCheckedModeBanner: false, // Set this to false
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -33,53 +28,190 @@ class NavigationExample extends StatefulWidget {
 }
 
 class _NavigationExampleState extends State<NavigationExample> {
-  int currentPageIndex = 0;
+  List<Character> characters = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  List<String> characterArray = [
+    'assets/character0.png',
+    'assets/character1.png',
+    'assets/character2.png',
+    'assets/character3.png',
+    'assets/character4.png',
+    'assets/character5.png'
+  ];
+
+  Future<void> fetchData() async {
+    final url = Uri.parse('http://127.0.0.1:5000/characterslist');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      // Parse the JSON response into a List<dynamic>
+      List<dynamic> jsonList = json.decode(response.body);
+      await Future.delayed(Duration(milliseconds: 250));
+
+      // Parse the JSON data into a list of Character objects
+      characters = jsonList.map((jsonRow) {
+        List<dynamic> row = jsonRow as List;
+        return Character(
+          id: row[0] as int,
+          name: row[1] as String,
+          criticalAttack: row[2] as int,
+          health: row[3] as int,
+          armor: row[4] as int,
+          attack: row[5] as int,
+          luck: row[6] as int,
+          level: row[7] as int,
+          xp: row[8] as int,
+          balance: row[9] as int,
+          alive: row[10] as bool,
+          playability: row[11] as bool,
+          maxHealth: row[12] as int,
+        );
+      }).toList();
+
+      setState(() {}); // Update the UI with the fetched data
+    } else {
+      print('Failed to fetch data. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<void> createCharacter() async {
+    final url = 'http://127.0.0.1:5000/addcharacter';
+    final postData = {
+      'post': 'post',
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        body: postData,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      );
+
+      if (response.statusCode == 200) {
+        try {} catch (error) {
+          print('Error updating character data: $error');
+        }
+      } else {
+        print('Error during fight: HTTP ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Network error during fight: $error');
+    }
+    await fetchData();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        backgroundColor:
-            Theme.of(context).bottomNavigationBarTheme.backgroundColor,
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        indicatorColor: const Color.fromARGB(255, 155, 181, 197),
-        selectedIndex: currentPageIndex,
-        destinations: <Widget>[
-          NavigationDestination(
-            icon: swordIcon(),
-            label: 'Fight',
-          ),
-          NavigationDestination(
-            icon: skullIcon(),
-            label: 'Mob Farm',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.storefront,
-                color: Theme.of(context).iconTheme.color),
-            label: 'Market',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.toll, color: Theme.of(context).iconTheme.color),
-            label: 'Skills',
-          ),
-          NavigationDestination(
-            icon:
-                Icon(Icons.settings, color: Theme.of(context).iconTheme.color),
-            label: 'Settings',
-          ),
-        ],
+      appBar: AppBar(
+        title: const Text('Character selection'),
+        elevation: 0.0,
       ),
-      body: <Widget>[
-        const FightingAction(),
-        const FightingMobs(),
-        const Market(),
-        const Skills(),
-        const Settings()
-      ][currentPageIndex],
+      body: RefreshIndicator(
+        onRefresh: fetchData,
+        child: ListView.builder(
+          itemCount: characters.length,
+          itemBuilder: (context, index) {
+            Character character = characters[index];
+
+            double calculatePercentage() {
+              if (character.xpGoal == 0) {
+                return 0.0; // Avoid division by zero
+              }
+
+              return character.xp / character.xpGoal;
+            }
+
+            int mapToRange1To5() {
+              // Use modulo to wrap the input within the range [1, 5]
+              double mappedValue = (character.id - 1) % 5 + 1;
+              return mappedValue.toInt();
+            }
+
+            return Card(
+              child: SizedBox(
+                width: 300,
+                height: 100,
+                child: Center(
+                  child: Row(
+                    children: [
+                      Stack(
+                        children: [
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 9, 0, 0),
+                            child: CircularPercentIndicator(
+                              radius: 40.0,
+                              lineWidth: 13.0,
+                              animation: false,
+                              percent: character.health >= 0
+                                  ? character.health / 100
+                                  : 0,
+                              circularStrokeCap: CircularStrokeCap.round,
+                              progressColor: Color.fromARGB(255, 144, 218, 146),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 255, 151, 144),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundImage: AssetImage(
+                                      characterArray[mapToRange1To5()]),
+                                  radius: 30,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(15),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        character.name,
+                                        style: TextStyle(fontSize: 26),
+                                      ),
+                                      LinearPercentIndicator(
+                                        width: 100.0,
+                                        lineHeight: 8.0,
+                                        percent: calculatePercentage(),
+                                        leading: Text("Lvl ${character.level}"),
+                                        trailing:
+                                            Text("Lvl ${character.level + 1}"),
+                                        progressColor: Colors.orange,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          createCharacter();
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.blue, // Customize the button color
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
     );
   }
 }
