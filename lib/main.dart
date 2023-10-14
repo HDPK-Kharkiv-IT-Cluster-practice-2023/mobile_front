@@ -92,14 +92,25 @@ class _NavigationExampleState extends State<NavigationExample> {
         body: postData,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       );
+    } catch (error) {
+      print('Network error during fight: $error');
+    }
+    await fetchData();
+    setState(() {});
+  }
 
-      if (response.statusCode == 200) {
-        try {} catch (error) {
-          print('Error updating character data: $error');
-        }
-      } else {
-        print('Error during fight: HTTP ${response.statusCode}');
-      }
+  Future<void> selectCharacter(int index) async {
+    final url = 'http://127.0.0.1:5000/selectcharacter';
+    final postData = {
+      'post': index.toString(),
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        body: postData,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      );
     } catch (error) {
       print('Network error during fight: $error');
     }
@@ -137,69 +148,87 @@ class _NavigationExampleState extends State<NavigationExample> {
 
             return Card(
               child: SizedBox(
-                width: 300,
-                height: 100,
-                child: Center(
-                  child: Row(
+                  width: 300,
+                  height: 100,
+                  child: Stack(
                     children: [
-                      Stack(
-                        children: [
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0, 9, 0, 0),
-                            child: CircularPercentIndicator(
-                              radius: 40.0,
-                              lineWidth: 13.0,
-                              animation: false,
-                              percent: character.health >= 0
-                                  ? character.health / 100
-                                  : 0,
-                              circularStrokeCap: CircularStrokeCap.round,
-                              progressColor: Color.fromARGB(255, 144, 218, 146),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 151, 144),
-                            ),
+                      Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: FilledButton(
+                            onPressed: () {
+                              selectCharacter(index);
+                            },
+                            child: Icon(Icons.play_arrow),
                           ),
-                          Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
-                            child: Row(
+                        ),
+                      ),
+                      Center(
+                        child: Row(
+                          children: [
+                            Stack(
                               children: [
-                                CircleAvatar(
-                                  backgroundImage: AssetImage(
-                                      characterArray[mapToRange1To5()]),
-                                  radius: 30,
+                                Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0, 9, 0, 0),
+                                  child: CircularPercentIndicator(
+                                    radius: 40.0,
+                                    lineWidth: 13.0,
+                                    animation: false,
+                                    percent: character.health >= 0
+                                        ? character.health / 100
+                                        : 0,
+                                    circularStrokeCap: CircularStrokeCap.round,
+                                    progressColor:
+                                        Color.fromARGB(255, 144, 218, 146),
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 255, 151, 144),
+                                  ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      10, 0, 0, 0),
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        character.name,
-                                        style: TextStyle(fontSize: 26),
+                                      CircleAvatar(
+                                        backgroundImage: AssetImage(
+                                            characterArray[mapToRange1To5()]),
+                                        radius: 30,
                                       ),
-                                      LinearPercentIndicator(
-                                        width: 100.0,
-                                        lineHeight: 8.0,
-                                        percent: calculatePercentage(),
-                                        leading: Text("Lvl ${character.level}"),
-                                        trailing:
-                                            Text("Lvl ${character.level + 1}"),
-                                        progressColor: Colors.orange,
+                                      Padding(
+                                        padding: EdgeInsets.all(15),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              character.name,
+                                              style: TextStyle(fontSize: 26),
+                                            ),
+                                            LinearPercentIndicator(
+                                              width: 100.0,
+                                              lineHeight: 8.0,
+                                              percent: calculatePercentage(),
+                                              leading: Text(
+                                                  "Lvl ${character.level}"),
+                                              trailing: Text(
+                                                  "Lvl ${character.level + 1}"),
+                                              progressColor: Colors.orange,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
-                  ),
-                ),
-              ),
+                  )),
             );
           },
         ),
