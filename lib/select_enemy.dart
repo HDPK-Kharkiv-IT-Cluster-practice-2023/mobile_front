@@ -1,14 +1,13 @@
-import 'package:fightingapp/gamemode_select.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'fetch_characters.dart';
 
-void main() => runApp(const NavigationBarApp());
+void main() => runApp(const ESelector());
 
-class NavigationBarApp extends StatelessWidget {
-  const NavigationBarApp({super.key});
+class ESelector extends StatelessWidget {
+  const ESelector({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +46,7 @@ class _NavigationExampleState extends State<NavigationExample> {
   ];
 
   Future<void> fetchData() async {
-    final url = Uri.parse('http://127.0.0.1:5000/characterslist');
+    final url = Uri.parse('http://127.0.0.1:5000/enemylist');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -153,23 +152,6 @@ class _NavigationExampleState extends State<NavigationExample> {
                   height: 100,
                   child: Stack(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: FilledButton(
-                            onPressed: () {
-                              selectCharacter(index);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const GMSelector()),
-                              );
-                            },
-                            child: Icon(Icons.play_arrow),
-                          ),
-                        ),
-                      ),
                       Center(
                         child: Row(
                           children: [
@@ -239,12 +221,12 @@ class _NavigationExampleState extends State<NavigationExample> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           createCharacter();
         },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.blue, // Customize the button color
+        label: const Text('Play'),
+        icon: const Icon(Icons.play_arrow),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
     );
