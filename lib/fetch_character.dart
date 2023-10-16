@@ -1,15 +1,16 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
-final character1Url = 'http://127.0.0.1:5000/character1';
-final character2Url = 'http://127.0.0.1:5000/character2';
-
-var currentLvl = 5;
+final character1Url = 'http://127.0.0.1:5000/character';
+final character2Url = 'http://127.0.0.1:5000/enemy';
 
 class Character {
+  int id;
   String name;
   int level;
   int xp;
+  int maxHealth;
   int health;
   int armor;
   int attack;
@@ -17,11 +18,15 @@ class Character {
   int balance;
   bool alive;
   int criticalAttack;
+  bool playability;
+  int xpGoal = 100;
 
   Character({
+    required this.id,
     required this.name,
     required this.level,
     required this.xp,
+    required this.maxHealth,
     required this.health,
     required this.armor,
     required this.attack,
@@ -29,29 +34,31 @@ class Character {
     required this.balance,
     required this.alive,
     required this.criticalAttack,
-  });
+    required this.playability,
+  }) {
+    xpGoal = calculateXpByLevel(level);
+  }
+
+  int calculateXpByLevel(int level) {
+    int baseXpGoal = 100;
+    return baseXpGoal + (level - 1) * 25;
+  }
 
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
-      name: json['name'] ?? 'N/A', // Provide a default value for 'name'
-      level:
-          json['level'] as int? ?? 0, // Provide a default value and cast to int
-      xp: json['xp'] as int? ?? 0, // Provide a default value and cast to int
-      health: json['health'] as int? ??
-          0, // Provide a default value and cast to int
-      armor:
-          json['armor'] as int? ?? 0, // Provide a default value and cast to int
-      attack: json['attack'] as int? ??
-          0, // Provide a default value and cast to int
-      luck:
-          json['luck'] as int? ?? 0, // Provide a default value and cast to int
-      balance: json['balance'] as int? ??
-          0, // Provide a default value and cast to int
-      alive: json['alive'] as bool? ??
-          false, // Provide a default value and cast to bool
-      criticalAttack: json['critical_attack'] as int? ??
-          0, // Provide a default value and cast to int
-    );
+        id: json['id'] ?? 'N/A',
+        name: json['name'] ?? 'N/A',
+        criticalAttack: json['criticalAttack'] as int? ?? 0,
+        health: json['health'] as int? ?? 0,
+        armor: json['armor'] as int? ?? 0,
+        attack: json['attack'] as int? ?? 0,
+        luck: json['luck'] as int? ?? 0,
+        level: json['level'] as int? ?? 0,
+        xp: json['xp'] as int? ?? 0,
+        balance: json['balance'] as int? ?? 0,
+        alive: json['alive'] as bool? ?? false,
+        playability: json['playability'] as bool? ?? false,
+        maxHealth: json['maxHealth'] as int? ?? 0);
   }
 }
 

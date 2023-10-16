@@ -191,8 +191,10 @@ class _FightingActionState extends State<FightingAction> {
                                     width: 100.0,
                                     lineHeight: 8.0,
                                     percent: 0.6,
-                                    leading: new Text("Lvl ${currentLvl}"),
-                                    trailing: new Text("Lvl ${currentLvl + 1}"),
+                                    leading:
+                                        Text("Lvl ${character1?.level ?? 0}"),
+                                    trailing: Text(
+                                        "Lvl ${(character1?.level ?? 0) + 1}"),
                                     progressColor: Colors.orange,
                                   ),
                                 ],

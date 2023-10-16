@@ -1,8 +1,11 @@
+import 'package:fightingapp/fighting_action.dart';
+import 'package:fightingapp/main.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'fetch_characters.dart';
+import 'fetch_character.dart';
+import 'navigation_bar.dart';
 
 void main() => runApp(const ESelector());
 
@@ -80,8 +83,8 @@ class _NavigationExampleState extends State<NavigationExample> {
     }
   }
 
-  Future<void> createCharacter() async {
-    final url = 'http://127.0.0.1:5000/addcharacter';
+  Future<void> selectEnemy() async {
+    final url = 'http://127.0.0.1:5000/selectenemy';
     final postData = {
       'post': 'post',
     };
@@ -223,7 +226,11 @@ class _NavigationExampleState extends State<NavigationExample> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          createCharacter();
+          selectEnemy();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const NavigationBarApp()),
+          );
         },
         label: const Text('Play'),
         icon: const Icon(Icons.play_arrow),

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'fetch_characters.dart';
+import 'fetch_character.dart';
 
-void main() => runApp(const NavigationBarApp());
+void main() => runApp(const CharacterSelection());
 
-class NavigationBarApp extends StatelessWidget {
-  const NavigationBarApp({super.key});
+class CharacterSelection extends StatelessWidget {
+  const CharacterSelection({super.key});
 
   @override
   Widget build(BuildContext context) {

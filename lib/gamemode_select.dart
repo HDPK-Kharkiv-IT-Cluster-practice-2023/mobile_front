@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'fetch_characters.dart';
 
 class GMSelector extends StatelessWidget {
   const GMSelector({super.key});
