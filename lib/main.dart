@@ -47,7 +47,7 @@ class _NavigationExampleState extends State<NavigationExample> {
   ];
 
   Future<void> fetchData() async {
-    final url = Uri.parse('http://127.0.0.1:5000/characterslist');
+    final url = Uri.parse('http://127.0.0.1:5000/api/v1/characters/true');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
