@@ -1,252 +1,225 @@
-import 'package:fightingapp/gamemode_select.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'fetch_character.dart';
 
-void main() => runApp(const CharacterSelection());
+final String defaultServer = '127.0.0.1:5000';
+String currentServer = '127.0.0.1:5000';
 
-class CharacterSelection extends StatelessWidget {
-  const CharacterSelection({super.key});
+void main() => runApp(ServerSelection());
+
+class ServerSelection extends StatelessWidget {
+  const ServerSelection({Key? key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
-      home: NavigationExample(),
+      home: Servers(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class NavigationExample extends StatefulWidget {
-  const NavigationExample({super.key});
+class Servers extends StatefulWidget {
+  const Servers({Key? key});
 
   @override
-  State<NavigationExample> createState() => _NavigationExampleState();
+  State<Servers> createState() => _ServersState();
 }
 
-class _NavigationExampleState extends State<NavigationExample> {
-  List<Character> characters = [];
+Future<String> getStatus(String url) async {
+  await Future.delayed(Duration(milliseconds: 250));
+  try {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data is Map<String, dynamic> && data.containsKey('status')) {
+        String status = data['status'];
+        return 'OK';
+      } else {
+        // Handle the case where the response doesn't contain the expected 'status' key.
+        return 'Invalid Data';
+      }
+    } else {
+      // Handle non-200 HTTP status codes (e.g., 404, 500, etc.).
+      return 'Not OK';
+    }
+  } catch (e) {
+    // Handle exceptions that may occur during the HTTP request or JSON decoding.
+    return 'Error: $e';
+  }
+}
+
+class _ServersState extends State<Servers> {
+  late Future<String> serverStatus;
+  late Future<String> customServerStatus;
+  late TextEditingController controller;
+  String customServer = '';
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    controller = TextEditingController();
+    serverStatus = getStatus('http://127.0.0.1:5000/api/v1/status');
+    customServerStatus = getStatus('http://${customServer}/api/v1/status');
   }
 
-  List<String> characterArray = [
-    'assets/character0.png',
-    'assets/character1.png',
-    'assets/character2.png',
-    'assets/character3.png',
-    'assets/character4.png',
-    'assets/character5.png'
-  ];
-
-  Future<void> fetchData() async {
-    final url = Uri.parse('http://127.0.0.1:5000/api/v1/characters/true');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      // Parse the JSON response into a List<dynamic>
-      List<dynamic> jsonList = json.decode(response.body);
-      await Future.delayed(Duration(milliseconds: 250));
-
-      // Parse the JSON data into a list of Character objects
-      characters = jsonList.map((jsonRow) {
-        List<dynamic> row = jsonRow as List;
-        return Character(
-          id: row[0] as int,
-          name: row[1] as String,
-          criticalAttack: row[2] as int,
-          health: row[3] as int,
-          armor: row[4] as int,
-          attack: row[5] as int,
-          luck: row[6] as int,
-          level: row[7] as int,
-          xp: row[8] as int,
-          balance: row[9] as int,
-          alive: row[10] as bool,
-          playability: row[11] as bool,
-          maxHealth: row[12] as int,
-        );
-      }).toList();
-
-      setState(() {}); // Update the UI with the fetched data
-    } else {
-      print('Failed to fetch data. Status code: ${response.statusCode}');
-    }
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
-  Future<void> createCharacter() async {
-    final url = 'http://127.0.0.1:5000/addcharacter';
-    final postData = {
-      'post': 'post',
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-    } catch (error) {
-      print('Network error during fight: $error');
-    }
-    await fetchData();
-    setState(() {});
-  }
-
-  Future<void> selectCharacter(int index) async {
-    final url = 'http://127.0.0.1:5000/selectcharacter';
-    final postData = {
-      'post': index.toString(),
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-    } catch (error) {
-      print('Network error during fight: $error');
-    }
-    await fetchData();
-    setState(() {});
+  void updateCustomServer() {
+    setState(() {
+      customServer = controller.text;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Character selection'),
+        title: const Text('Server Selection'),
         elevation: 0.0,
       ),
       body: RefreshIndicator(
-        onRefresh: fetchData,
-        child: ListView.builder(
-          itemCount: characters.length,
-          itemBuilder: (context, index) {
-            Character character = characters[index];
-
-            double calculatePercentage() {
-              if (character.xpGoal == 0) {
-                return 0.0; // Avoid division by zero
-              }
-
-              return character.xp / character.xpGoal;
-            }
-
-            int mapToRange1To5() {
-              // Use modulo to wrap the input within the range [1, 5]
-              double mappedValue = (character.id - 1) % 5 + 1;
-              return mappedValue.toInt();
-            }
-
-            return Card(
+        onRefresh: () async {
+          setState(() {
+            serverStatus = getStatus('http://127.0.0.1:5000/api/v1/status');
+            customServerStatus =
+                getStatus('http://${customServer}/api/v1/status');
+          });
+        },
+        child: ListView(
+          children: [
+            Card(
+                child: InkWell(
+              onTap: () {},
               child: SizedBox(
-                  width: 300,
-                  height: 100,
-                  child: Stack(
+                width: 300,
+                height: 100,
+                child: Center(
+                  child: Row(
                     children: [
                       Padding(
                         padding: EdgeInsets.all(15),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: FilledButton(
-                            onPressed: () {
-                              selectCharacter(index);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const GMSelector()),
-                              );
-                            },
-                            child: Icon(Icons.play_arrow),
-                          ),
+                        child: Icon(
+                          Icons.dns,
+                          size: 30,
                         ),
                       ),
-                      Center(
-                        child: Row(
-                          children: [
-                            Stack(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 9, 0, 0),
-                                  child: CircularPercentIndicator(
-                                    radius: 40.0,
-                                    lineWidth: 13.0,
-                                    animation: false,
-                                    percent: character.health >= 0
-                                        ? character.health / 100
-                                        : 0,
-                                    circularStrokeCap: CircularStrokeCap.round,
-                                    progressColor:
-                                        Color.fromARGB(255, 144, 218, 146),
-                                    backgroundColor: const Color.fromARGB(
-                                        255, 255, 151, 144),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      10, 0, 0, 0),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundImage: AssetImage(
-                                            characterArray[mapToRange1To5()]),
-                                        radius: 30,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(15),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              character.name,
-                                              style: TextStyle(fontSize: 26),
-                                            ),
-                                            LinearPercentIndicator(
-                                              width: 100.0,
-                                              lineHeight: 8.0,
-                                              percent: calculatePercentage(),
-                                              leading: Text(
-                                                  "Lvl ${character.level}"),
-                                              trailing: Text(
-                                                  "Lvl ${character.level + 1}"),
-                                              progressColor: Colors.orange,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      Text('Default server'),
+                      Spacer(),
+                      FutureBuilder<String>(
+                        future: serverStatus,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Icon(Icons.trip_origin,
+                                color: Colors.orange);
+                          } else if (snapshot.hasError) {
+                            return Icon(Icons.trip_origin, color: Colors.red);
+                          } else {
+                            return Icon(Icons.trip_origin,
+                                color: snapshot.data == 'OK'
+                                    ? Colors.green
+                                    : Colors.red);
+                          }
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Icon(Icons.arrow_forward_ios),
                       ),
                     ],
-                  )),
-            );
-          },
+                  ),
+                ),
+              ),
+            )),
+            Card(
+              child: InkWell(
+                onTap: () {},
+                child: SizedBox(
+                  width: 300,
+                  height: 100,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Icon(
+                          Icons.dns,
+                          size: 30,
+                        ),
+                      ),
+                      Text('Custom server'),
+                      TextButton(
+                        onPressed: () => showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text('Enter your server:'),
+                            content: TextField(
+                              controller:
+                                  controller, // Use the TextEditingController
+                              obscureText: false,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Server address',
+                              ),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, 'Cancel'),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  updateCustomServer(); // Update customServer when OK is pressed
+                                  Navigator.pop(context, 'OK');
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        child: Icon(Icons.edit),
+                        style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(),
+                        ),
+                      ),
+                      Spacer(),
+                      FutureBuilder<String>(
+                        future: customServerStatus,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Icon(Icons.trip_origin,
+                                color: Colors.orange);
+                          } else if (snapshot.hasError) {
+                            return Icon(Icons.trip_origin, color: Colors.red);
+                          } else {
+                            return Icon(Icons.trip_origin,
+                                color: snapshot.data == 'OK'
+                                    ? Colors.green
+                                    : Colors.red);
+                          }
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Icon(Icons.arrow_forward_ios),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          createCharacter();
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.blue, // Customize the button color
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
     );
   }
 }

@@ -1,16 +1,15 @@
-import 'package:fightingapp/fighting_action.dart';
-import 'package:fightingapp/main.dart';
+import 'package:fightingapp/gamemode_select.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'fetch_character.dart';
-import 'navigation_bar.dart';
+import 'main.dart';
 
-void main() => runApp(const ESelector());
+void main() => runApp(const CharacterSelection());
 
-class ESelector extends StatelessWidget {
-  const ESelector({super.key});
+class CharacterSelection extends StatelessWidget {
+  const CharacterSelection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +48,7 @@ class _NavigationExampleState extends State<NavigationExample> {
   ];
 
   Future<void> fetchData() async {
-    final url = Uri.parse('http://${currentServer}/api/v1/characters/false');
+    final url = Uri.parse('http://${currentServer}/api/v1/characters/true');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -83,8 +82,8 @@ class _NavigationExampleState extends State<NavigationExample> {
     }
   }
 
-  Future<void> selectEnemy() async {
-    final url = 'http://${currentServer}/selectenemy';
+  Future<void> createCharacter() async {
+    final url = 'http://${currentServer}/addcharacter';
     final postData = {
       'post': 'post',
     };
@@ -121,40 +120,12 @@ class _NavigationExampleState extends State<NavigationExample> {
     setState(() {});
   }
 
-  Future<void> createEnemy() async {
-    final url = '${currentServer}/addenemy';
-    final postData = {
-      'post': 'post',
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-    } catch (error) {
-      print('Network error during fight: $error');
-    }
-    await fetchData();
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Character selection'),
         elevation: 0.0,
-        actions: [
-          IconButton(
-            onPressed: () {
-              createEnemy();
-            },
-            icon: Icon(Icons.add),
-            iconSize: 35,
-          )
-        ],
       ),
       body: RefreshIndicator(
         onRefresh: fetchData,
@@ -183,6 +154,23 @@ class _NavigationExampleState extends State<NavigationExample> {
                   height: 100,
                   child: Stack(
                     children: [
+                      Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: FilledButton(
+                            onPressed: () {
+                              selectCharacter(index);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const GMSelector()),
+                              );
+                            },
+                            child: Icon(Icons.play_arrow),
+                          ),
+                        ),
+                      ),
                       Center(
                         child: Row(
                           children: [
@@ -252,16 +240,12 @@ class _NavigationExampleState extends State<NavigationExample> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
-          selectEnemy();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const NavigationBarApp()),
-          );
+          createCharacter();
         },
-        label: const Text('Play'),
-        icon: const Icon(Icons.play_arrow),
+        child: Icon(Icons.add),
+        backgroundColor: Colors.blue, // Customize the button color
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
     );
