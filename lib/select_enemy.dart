@@ -5,8 +5,10 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'fetch_character.dart';
-import 'navigation_bar.dart';
+import 'fight_navigation_bar.dart';
+import 'dart:math';
 
+int selectedEnemyID = 0;
 void main() => runApp(const ESelector());
 
 class ESelector extends StatelessWidget {
@@ -57,23 +59,24 @@ class _NavigationExampleState extends State<NavigationExample> {
       List<dynamic> jsonList = json.decode(response.body);
       await Future.delayed(Duration(milliseconds: 250));
 
-      // Parse the JSON data into a list of Character objects
-      characters = jsonList.map((jsonRow) {
-        List<dynamic> row = jsonRow as List;
+      // Parse the JSON data into a list of Character objects and update the class-level characters list
+      characters = jsonList.map((jsonCharacter) {
+        Map<String, dynamic> characterData =
+            jsonCharacter as Map<String, dynamic>;
         return Character(
-          id: row[0] as int,
-          name: row[1] as String,
-          criticalAttack: row[2] as int,
-          health: row[3] as int,
-          armor: row[4] as int,
-          attack: row[5] as int,
-          luck: row[6] as int,
-          level: row[7] as int,
-          xp: row[8] as int,
-          balance: row[9] as int,
-          alive: row[10] as bool,
-          playability: row[11] as bool,
-          maxHealth: row[12] as int,
+          id: characterData['id'] as int,
+          name: characterData['name'] as String,
+          criticalAttack: characterData['critical_attack'] as int,
+          health: characterData['health'] as int,
+          armor: characterData['armor'] as int,
+          attack: characterData['attack'] as int,
+          luck: characterData['luck'] as int,
+          level: characterData['level'] as int,
+          xp: characterData['xp'] as int,
+          balance: characterData['balance'] as int,
+          alive: characterData['alive'] as bool,
+          playability: characterData['playability'] as bool,
+          maxHealth: characterData['max_health'] as int,
         );
       }).toList();
 
@@ -83,46 +86,8 @@ class _NavigationExampleState extends State<NavigationExample> {
     }
   }
 
-  Future<void> selectEnemy() async {
-    final url = 'http://${currentServer}/selectenemy';
-    final postData = {
-      'post': 'post',
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-    } catch (error) {
-      print('Network error during fight: $error');
-    }
-    await fetchData();
-    setState(() {});
-  }
-
-  Future<void> selectCharacter(int index) async {
-    final url = 'http://${currentServer}/selectcharacter';
-    final postData = {
-      'post': index.toString(),
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-    } catch (error) {
-      print('Network error during fight: $error');
-    }
-    await fetchData();
-    setState(() {});
-  }
-
   Future<void> createEnemy() async {
-    final url = '${currentServer}/addenemy';
+    final url = 'http://${currentServer}/addenemy';
     final postData = {
       'post': 'post',
     };
@@ -254,11 +219,15 @@ class _NavigationExampleState extends State<NavigationExample> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          selectEnemy();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const NavigationBarApp()),
-          );
+          if (characters.isNotEmpty) {
+            final random = Random();
+            final randomIndex = random.nextInt(characters.length);
+            selectedEnemyID = characters[randomIndex].id;
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NavigationBarApp()),
+            );
+          }
         },
         label: const Text('Play'),
         icon: const Icon(Icons.play_arrow),

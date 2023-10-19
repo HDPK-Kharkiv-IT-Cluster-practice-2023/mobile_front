@@ -15,75 +15,23 @@ class _FightingMobsState extends State<FightingMobs> {
   @override
   void initState() {
     super.initState();
-    fetchMobFight();
   }
 
-  Future<void> fetchMobFight() async {
-    try {
-      mob = await fetchMob(mobURL);
-    } catch (e) {
-      print('Error fetching mob: $e');
-    }
+  Character? character1;
 
-    try {
-      character1 = await fetchCharacter(character1Url);
-    } catch (e) {
-      print('Error fetching character: $e');
-    }
-    setState(() {});
-  }
+  List<String> characterArray = [
+    'assets/character0.png',
+    'assets/character1.png',
+    'assets/character2.png',
+    'assets/character3.png',
+    'assets/character4.png',
+    'assets/character5.png'
+  ];
 
-  Future<void> fightMob() async {
-    final url = Uri.parse('http://127.0.0.1:5000/fight_mob');
-    final postData = {
-      'mob': 'Ударить', // Replace 'damage' with actual damage
-    };
-
-    final response = await http.post(
-      url,
-      body: postData,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    );
-
-    if (response.statusCode == 200) {
-      // Handle a successful response, if needed
-    } else {
-      // Handle the error, if needed
-      print('Error during fight: HTTP ${response.statusCode}');
-    }
-
-    // Update character and mob data after the fight
-    await fetchMobFight();
-    setState(() {});
-  }
-
-  Future<void> initCharacters() async {
-    final url = 'http://127.0.0.1:5000/init';
-    final postData = {
-      'init': 'init',
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-
-      if (response.statusCode == 200) {
-        try {
-          character1 = await fetchCharacter(character1Url);
-        } catch (error) {
-          print('Error updating character data: $error');
-        }
-      } else {
-        print('Error during fight: HTTP ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Network error during fight: $error');
-    }
-    await fetchCharacter(character1Url);
-    setState(() {});
+  int mapToRange1To5(int id) {
+    // Use modulo to wrap the input within the range [1, 5]
+    double mappedValue = (id - 1) % 5 + 1;
+    return mappedValue.toInt();
   }
 
   @override
@@ -133,8 +81,8 @@ class _FightingMobsState extends State<FightingMobs> {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundImage:
-                                AssetImage("assets/character2.png"),
+                            backgroundImage: AssetImage(characterArray[
+                                mapToRange1To5(character1?.id ?? 0)]),
                             radius: 30,
                           ),
                           Padding(
@@ -212,7 +160,7 @@ class _FightingMobsState extends State<FightingMobs> {
                                 Padding(
                                   padding: EdgeInsets.all(15),
                                   child: Text(
-                                    mob != null ? mob!.name : 'N/A',
+                                    mob != null ? mob!.mob_name : 'N/A',
                                     style: TextStyle(fontSize: 26),
                                   ),
                                 ),
@@ -247,7 +195,6 @@ class _FightingMobsState extends State<FightingMobs> {
             child: FilledButton(
               onPressed: () {
                 if (!buttonIsDisabled) {
-                  fightMob();
                 } else {
                   showDialog(
                     context: context,
@@ -258,14 +205,12 @@ class _FightingMobsState extends State<FightingMobs> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
-                              initCharacters();
                               Navigator.pop(context, 'New Game');
                             },
                             child: const Text('New Game'),
                           ),
                           TextButton(
                             onPressed: () {
-                              initCharacters();
                               Navigator.pop(context, 'OK');
                             },
                             child: const Text('OK'),

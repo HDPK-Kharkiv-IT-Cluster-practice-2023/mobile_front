@@ -1,50 +1,74 @@
 import 'dart:convert';
 import 'dart:io';
 
-final mobURL = 'http://127.0.0.1:5000/mob';
-
 class Mob {
+  int id;
+  String mob_name;
   int level;
   int xp;
-  String name;
+  int maxHealth;
   int health;
   int armor;
   int attack;
   int luck;
+  int balance;
   bool alive;
-  double criticalAttack;
+  int criticalAttack;
+  bool playability;
+  int xpGoal = 100;
 
   Mob({
+    required this.id,
+    required this.mob_name,
     required this.level,
     required this.xp,
-    required this.name,
+    required this.maxHealth,
     required this.health,
     required this.armor,
     required this.attack,
     required this.luck,
+    required this.balance,
     required this.alive,
     required this.criticalAttack,
-  });
+    required this.playability,
+  }) {
+    xpGoal = calculateXpByLevel(level);
+  }
+
+  int calculateXpByLevel(int level) {
+    int baseXpGoal = 100;
+    return baseXpGoal + (level - 1) * 25;
+  }
+
   factory Mob.fromJson(Map<String, dynamic> json) {
     return Mob(
-      name: json['name'] ?? 'N/A', // Provide a default value for 'name'
-      level:
-          json['level'] as int? ?? 0, // Provide a default value and cast to int
-      xp: json['xp'] as int? ?? 0, // Provide a default value and cast to int
-      health: json['health'] as int? ??
-          0, // Provide a default value and cast to int
-      armor:
-          json['armor'] as int? ?? 0, // Provide a default value and cast to int
-      attack: json['attack'] as int? ??
-          0, // Provide a default value and cast to int
-      luck:
-          json['luck'] as int? ?? 0, // Provide a default value and cast to int
-      alive: json['alive'] as bool? ??
-          false, // Provide a default value and cast to bool
-      criticalAttack: json['criticalAttack'] as double? ??
-          0.0, // Provide a default value and cast to double
-    );
+        id: json['id'] ?? 'N/A',
+        mob_name: json['name'] ?? 'N/A',
+        criticalAttack: json['criticalAttack'] as int? ?? 0,
+        health: json['health'] as int? ?? 0,
+        armor: json['armor'] as int? ?? 0,
+        attack: json['attack'] as int? ?? 0,
+        luck: json['luck'] as int? ?? 0,
+        level: json['level'] as int? ?? 0,
+        xp: json['xp'] as int? ?? 0,
+        balance: json['balance'] as int? ?? 0,
+        alive: json['alive'] as bool? ?? false,
+        playability: json['playability'] as bool? ?? false,
+        maxHealth: json['maxHealth'] as int? ?? 0);
   }
+}
+
+Mob? character1;
+Mob? character2;
+
+Future<Mob?> fetchCharacter(String url) async {
+  final response = await HttpClient().getUrl(Uri.parse(url));
+  final httpResponse = await response.close();
+  final responseBody = await utf8.decodeStream(httpResponse);
+
+  final Map<String, dynamic> jsonData = json.decode(responseBody);
+
+  return Mob.fromJson(jsonData);
 }
 
 Mob? mob;

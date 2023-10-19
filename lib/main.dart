@@ -1,3 +1,4 @@
+import 'package:fightingapp/select_hero.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -62,7 +63,7 @@ class _ServersState extends State<Servers> {
   void initState() {
     super.initState();
     controller = TextEditingController();
-    serverStatus = getStatus('http://127.0.0.1:5000/api/v1/status');
+    serverStatus = getStatus('http://${defaultServer}/api/v1/status');
     customServerStatus = getStatus('http://${customServer}/api/v1/status');
   }
 
@@ -97,7 +98,19 @@ class _ServersState extends State<Servers> {
           children: [
             Card(
                 child: InkWell(
-              onTap: () {},
+              onTap: () async {
+                currentServer = defaultServer;
+                String status =
+                    await serverStatus; // Wait for the future to complete
+                if (status == "OK") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CharacterSelection(),
+                    ),
+                  );
+                }
+              },
               child: SizedBox(
                 width: 300,
                 height: 100,
@@ -141,7 +154,19 @@ class _ServersState extends State<Servers> {
             )),
             Card(
               child: InkWell(
-                onTap: () {},
+                onTap: () async {
+                  currentServer = customServer;
+                  String status =
+                      await customServerStatus; // Wait for the future to complete
+                  if (status == "OK") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CharacterSelection(),
+                      ),
+                    );
+                  }
+                },
                 child: SizedBox(
                   width: 300,
                   height: 100,

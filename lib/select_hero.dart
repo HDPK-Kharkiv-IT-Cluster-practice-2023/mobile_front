@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'fetch_character.dart';
 import 'main.dart';
 
+int selectedCharacterID = 0;
+
 void main() => runApp(const CharacterSelection());
 
 class CharacterSelection extends StatelessWidget {
@@ -44,7 +46,7 @@ class _NavigationExampleState extends State<NavigationExample> {
     'assets/character2.png',
     'assets/character3.png',
     'assets/character4.png',
-    'assets/character5.png'
+    'assets/character5.png',
   ];
 
   Future<void> fetchData() async {
@@ -56,23 +58,24 @@ class _NavigationExampleState extends State<NavigationExample> {
       List<dynamic> jsonList = json.decode(response.body);
       await Future.delayed(Duration(milliseconds: 250));
 
-      // Parse the JSON data into a list of Character objects
-      characters = jsonList.map((jsonRow) {
-        List<dynamic> row = jsonRow as List;
+      // Parse the JSON data into a list of Character objects and update the class-level characters list
+      characters = jsonList.map((jsonCharacter) {
+        Map<String, dynamic> characterData =
+            jsonCharacter as Map<String, dynamic>;
         return Character(
-          id: row[0] as int,
-          name: row[1] as String,
-          criticalAttack: row[2] as int,
-          health: row[3] as int,
-          armor: row[4] as int,
-          attack: row[5] as int,
-          luck: row[6] as int,
-          level: row[7] as int,
-          xp: row[8] as int,
-          balance: row[9] as int,
-          alive: row[10] as bool,
-          playability: row[11] as bool,
-          maxHealth: row[12] as int,
+          id: characterData['id'] as int,
+          name: characterData['name'] as String,
+          criticalAttack: characterData['critical_attack'] as int,
+          health: characterData['health'] as int,
+          armor: characterData['armor'] as int,
+          attack: characterData['attack'] as int,
+          luck: characterData['luck'] as int,
+          level: characterData['level'] as int,
+          xp: characterData['xp'] as int,
+          balance: characterData['balance'] as int,
+          alive: characterData['alive'] as bool,
+          playability: characterData['playability'] as bool,
+          maxHealth: characterData['max_health'] as int,
         );
       }).toList();
 
@@ -101,23 +104,62 @@ class _NavigationExampleState extends State<NavigationExample> {
     setState(() {});
   }
 
-  Future<void> selectCharacter(int index) async {
-    final url = 'http://${currentServer}/selectcharacter';
-    final postData = {
-      'post': index.toString(),
+  Future<void> sendCharacterData({
+    bool alive = true,
+    required int armor,
+    required int attack,
+    int balance = 0,
+    required int criticalAttack,
+    required int health,
+    required int level,
+    required int luck,
+    required int maxHealth,
+    required String name,
+    bool playability = true,
+    int statPoints = 1,
+    int xp = 0,
+  }) async {
+    final apiUrl = Uri.parse(
+        'http://$currentServer/api/v1/character'); // Replace with your API endpoint
+    final characterData = {
+      "alive": alive,
+      "armor": armor,
+      "attack": attack,
+      "balance": balance,
+      "critical_attack": criticalAttack,
+      "health": health,
+      "level": level,
+      "luck": luck,
+      "max_health": maxHealth,
+      "name": name,
+      "playability": playability,
+      "stat_points": statPoints,
+      "xp": xp,
+    };
+
+    final headers = {
+      "Content-Type": "application/json", // Set the content type to JSON
     };
 
     try {
       final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        apiUrl,
+        headers: headers,
+        body: json.encode(characterData),
       );
-    } catch (error) {
-      print('Network error during fight: $error');
+
+      if (response.statusCode == 200) {
+        print("Character data sent successfully.");
+        // You can handle the response here if needed.
+      } else {
+        print(
+            "Failed to send character data. Status code: ${response.statusCode}");
+        // Handle the error here.
+      }
+    } catch (e) {
+      print("Error sending character data: $e");
+      // Handle the exception here.
     }
-    await fetchData();
-    setState(() {});
   }
 
   @override
@@ -150,104 +192,183 @@ class _NavigationExampleState extends State<NavigationExample> {
 
             return Card(
               child: SizedBox(
-                  width: 300,
-                  height: 100,
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: FilledButton(
-                            onPressed: () {
-                              selectCharacter(index);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const GMSelector()),
-                              );
-                            },
-                            child: Icon(Icons.play_arrow),
+                width: 300,
+                height: 100,
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: FilledButton(
+                          onPressed: () {
+                            selectedCharacterID = character.id;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const GMSelector(),
+                              ),
+                            );
+                          },
+                          child: Icon(Icons.play_arrow),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Row(
+                        children: [
+                          Stack(
+                            children: [
+                              Padding(
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 9, 0, 0),
+                                child: CircularPercentIndicator(
+                                  radius: 40.0,
+                                  lineWidth: 13.0,
+                                  animation: false,
+                                  percent: character.health >= 0
+                                      ? character.health / 100
+                                      : 0,
+                                  circularStrokeCap: CircularStrokeCap.round,
+                                  progressColor:
+                                      Color.fromARGB(255, 144, 218, 146),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 255, 151, 144),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          characterArray[mapToRange1To5()]),
+                                      radius: 30,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            character.name,
+                                            style: TextStyle(fontSize: 26),
+                                          ),
+                                          LinearPercentIndicator(
+                                            width: 100.0,
+                                            lineHeight: 8.0,
+                                            percent: calculatePercentage(),
+                                            leading:
+                                                Text("Lvl ${character.level}"),
+                                            trailing: Text(
+                                                "Lvl ${character.level + 1}"),
+                                            progressColor: Colors.orange,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
+                        ],
                       ),
-                      Center(
-                        child: Row(
-                          children: [
-                            Stack(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 9, 0, 0),
-                                  child: CircularPercentIndicator(
-                                    radius: 40.0,
-                                    lineWidth: 13.0,
-                                    animation: false,
-                                    percent: character.health >= 0
-                                        ? character.health / 100
-                                        : 0,
-                                    circularStrokeCap: CircularStrokeCap.round,
-                                    progressColor:
-                                        Color.fromARGB(255, 144, 218, 146),
-                                    backgroundColor: const Color.fromARGB(
-                                        255, 255, 151, 144),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      10, 0, 0, 0),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundImage: AssetImage(
-                                            characterArray[mapToRange1To5()]),
-                                        radius: 30,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(15),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              character.name,
-                                              style: TextStyle(fontSize: 26),
-                                            ),
-                                            LinearPercentIndicator(
-                                              width: 100.0,
-                                              lineHeight: 8.0,
-                                              percent: calculatePercentage(),
-                                              leading: Text(
-                                                  "Lvl ${character.level}"),
-                                              trailing: Text(
-                                                  "Lvl ${character.level + 1}"),
-                                              progressColor: Colors.orange,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )),
+                    ),
+                  ],
+                ),
+              ),
             );
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          createCharacter();
+          sendCharacterDataDialog();
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.blue, // Customize the button color
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+    );
+  }
+
+  // Function to show an alert dialog with input fields for character parameters
+  Future<void> sendCharacterDataDialog() async {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController healthController = TextEditingController();
+    final TextEditingController armorController = TextEditingController();
+    final TextEditingController attackController = TextEditingController();
+    final TextEditingController criticalAttackController =
+        TextEditingController();
+    final TextEditingController levelController = TextEditingController();
+    final TextEditingController luckController = TextEditingController();
+    final TextEditingController maxHealthController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter Character Parameters'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(labelText: 'Name')),
+                TextField(
+                    controller: healthController,
+                    decoration: InputDecoration(labelText: 'Health')),
+                TextField(
+                    controller: armorController,
+                    decoration: InputDecoration(labelText: 'Armor')),
+                TextField(
+                    controller: attackController,
+                    decoration: InputDecoration(labelText: 'Attack')),
+                TextField(
+                    controller: criticalAttackController,
+                    decoration: InputDecoration(labelText: 'Critical Attack')),
+                TextField(
+                    controller: levelController,
+                    decoration: InputDecoration(labelText: 'Level')),
+                TextField(
+                    controller: luckController,
+                    decoration: InputDecoration(labelText: 'Luck')),
+                TextField(
+                    controller: maxHealthController,
+                    decoration: InputDecoration(labelText: 'Max Health')),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                sendCharacterData(
+                  name: nameController.text,
+                  health: int.tryParse(healthController.text) ?? 0,
+                  armor: int.tryParse(armorController.text) ?? 0,
+                  attack: int.tryParse(attackController.text) ?? 0,
+                  criticalAttack:
+                      int.tryParse(criticalAttackController.text) ?? 0,
+                  level: int.tryParse(levelController.text) ?? 0,
+                  luck: int.tryParse(luckController.text) ?? 0,
+                  maxHealth: int.tryParse(maxHealthController.text) ?? 0,
+                );
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

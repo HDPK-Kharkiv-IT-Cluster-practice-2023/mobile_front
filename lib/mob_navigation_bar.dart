@@ -15,20 +15,20 @@ class NavigationBarApp extends StatelessWidget {
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
 
-      home: NavigationExample(),
+      home: MobNavigationExample(),
       debugShowCheckedModeBanner: false, // Set this to false
     );
   }
 }
 
-class NavigationExample extends StatefulWidget {
-  const NavigationExample({super.key});
+class MobNavigationExample extends StatefulWidget {
+  const MobNavigationExample({super.key});
 
   @override
-  State<NavigationExample> createState() => _NavigationExampleState();
+  State<MobNavigationExample> createState() => _NavigationExampleState();
 }
 
-class _NavigationExampleState extends State<NavigationExample> {
+class _NavigationExampleState extends State<MobNavigationExample> {
   int currentPageIndex = 0;
 
   @override
@@ -46,12 +46,8 @@ class _NavigationExampleState extends State<NavigationExample> {
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
           NavigationDestination(
-            icon: swordIcon(),
-            label: 'Fight',
-          ),
-          NavigationDestination(
             icon: skullIcon(),
-            label: 'Mob Farm',
+            label: 'Fight',
           ),
           NavigationDestination(
             icon: Icon(Icons.storefront,
@@ -70,7 +66,6 @@ class _NavigationExampleState extends State<NavigationExample> {
         ],
       ),
       body: <Widget>[
-        const FightingAction(),
         const FightingMobs(),
         const Market(),
         const Skills(),

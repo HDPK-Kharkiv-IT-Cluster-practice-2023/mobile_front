@@ -1,9 +1,12 @@
 import 'package:fightingapp/gamemode_select.dart';
+import 'package:fightingapp/mob_navigation_bar.dart';
 import 'package:fightingapp/select_enemy.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+String enemy_type = '';
 
 class GMSelector extends StatelessWidget {
   const GMSelector({super.key});
@@ -43,7 +46,12 @@ class GMSelector extends StatelessWidget {
           children: <Widget>[
             GestureDetector(
               onTap: () {
-                selectMode(2);
+                enemy_type = 'mob';
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MobNavigationExample()),
+                );
               },
               child: Card(
                 color: Colors.green,
@@ -56,7 +64,7 @@ class GMSelector extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                selectMode(1);
+                enemy_type = 'character';
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ESelector()),

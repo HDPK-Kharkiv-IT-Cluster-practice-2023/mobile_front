@@ -4,6 +4,14 @@ import 'fetch_character.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+import 'main.dart';
+import 'select_hero.dart';
+import 'select_enemy.dart';
+import 'gamemode_select.dart';
+import 'fetch_mob.dart';
+
+Character? hero;
+Mob? enemy;
 
 class FightingAction extends StatefulWidget {
   const FightingAction({super.key});
@@ -16,121 +24,65 @@ class _FightingActionState extends State<FightingAction> {
   @override
   void initState() {
     super.initState();
-    fetchCharacters(); // Call the fetchCharacters method here to initialize character1 and character2.
+
+    // Fetch the initial character data and set it to hero and enemy
+    initiateFight(selectedCharacterID, selectedEnemyID,
+        'attack'); // You should have a method to fetch the initial data.
   }
 
-  Future<void> fetchCharacters() async {
-    try {
-      character1 = await fetchCharacter(character1Url);
-    } catch (e) {
-      print('Error fetching character 1: $e');
-    }
+  List<String> characterArray = [
+    'assets/character0.png',
+    'assets/character1.png',
+    'assets/character2.png',
+    'assets/character3.png',
+    'assets/character4.png',
+    'assets/character5.png'
+  ];
 
-    try {
-      character2 = await fetchCharacter(character2Url);
-    } catch (e) {
-      print('Error fetching character 2: $e');
-    }
-    setState(() {});
+  int mapToRange1To5(int id) {
+    // Use modulo to wrap the input within the range [1, 5]
+    double mappedValue = (id - 1) % 5 + 1;
+    return mappedValue.toInt();
   }
 
-  Future<void> fight() async {
-    final url = 'http://127.0.0.1:5000/fight_character';
-    final postData = {
-      'c1damage':
-          'damage', // Replace 'damage' with the actual damage you want to send
-    };
+  void initiateFight(int heroId, int enemyId, String action) async {
+    final apiUrl = Uri.parse(
+        'http://$currentServer/api/v1/fight/$heroId/$enemyId?action=$action&enemy_type=character');
+    final response = await http.get(apiUrl);
 
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
 
-      if (response.statusCode == 200) {
-        // After the fight, update character data
-        try {
-          character1 = await fetchCharacter(character1Url);
-        } catch (error) {
-          print('Error updating character data: $error');
-        }
-        try {
-          character2 = await fetchCharacter(character2Url);
-        } catch (error) {
-          print('Error updating character data: $error');
-        }
-      } else {
-        print('Error during fight: HTTP ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Network error during fight: $error');
+      setState(() {
+        hero = Character.fromJson(data['hero']);
+        enemy = Mob.fromJson(data['enemy']);
+      });
+
+      print('Fight initiated successfully');
+    } else {
+      // Handle any errors
+      print('Failed to initiate fight. Status code: ${response.statusCode}');
     }
-    await fetchCharacters();
-    setState(() {});
-  }
-
-  Future<void> initCharacters() async {
-    final url = 'http://127.0.0.1:5000/init';
-    final postData = {
-      'init': 'init',
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-
-      if (response.statusCode == 200) {
-        try {
-          character1 = await fetchCharacter(character1Url);
-        } catch (error) {
-          print('Error updating character data: $error');
-        }
-        try {
-          character2 = await fetchCharacter(character2Url);
-        } catch (error) {
-          print('Error updating character data: $error');
-        }
-      } else {
-        print('Error during fight: HTTP ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Network error during fight: $error');
-    }
-    await fetchCharacters();
-    setState(() {});
-  }
-
-  Future<Character?> fetchCharacter(String url) async {
-    final response = await HttpClient().getUrl(Uri.parse(url));
-    final httpResponse = await response.close();
-    final responseBody = await utf8.decodeStream(httpResponse);
-
-    final Map<String, dynamic> jsonData = json.decode(responseBody);
-
-    return Character.fromJson(jsonData);
   }
 
   @override
   Widget build(BuildContext context) {
-    var character1Hp = character1 != null ? character1!.health : 0;
-    var character2Hp = character2 != null ? character2!.health : 0;
+    var heroHp = hero != null ? hero!.health : 0;
+    var enemyHp = enemy != null ? enemy!.health : 0;
 
     var winner = "";
     var buttonIsDisabled = false;
 
-    if (character1 != null && character1!.health <= 0) {
-      winner = character2 != null ? character2!.name : 'N/A';
+    if (hero != null && hero!.health <= 0) {
+      winner = enemy != null ? enemy!.mob_name : 'N/A';
       buttonIsDisabled = true;
     }
 
-    if (character2 != null && character2!.health <= 0) {
-      winner = character1 != null ? character1!.name : 'N/A';
+    if (enemy != null && enemy!.health <= 0) {
+      winner = hero != null ? hero!.name : 'N/A';
       buttonIsDisabled = true;
     }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('PvP'),
@@ -151,7 +103,7 @@ class _FightingActionState extends State<FightingAction> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  // Character1 avatar, Name, Healthbar padding.
+                  // Hero avatar, Name, Healthbar padding.
                   padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                   child: Stack(children: [
                     Padding(
@@ -160,7 +112,7 @@ class _FightingActionState extends State<FightingAction> {
                         radius: 40.0,
                         lineWidth: 13.0,
                         animation: false,
-                        percent: character1Hp >= 0 ? character1Hp / 100 : 0,
+                        percent: heroHp >= 0 ? heroHp / 100 : 0,
                         circularStrokeCap: CircularStrokeCap.round,
                         progressColor: Color.fromARGB(255, 144, 218, 146),
                         backgroundColor:
@@ -172,8 +124,8 @@ class _FightingActionState extends State<FightingAction> {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundImage:
-                                AssetImage("assets/character2.png"),
+                            backgroundImage: AssetImage(
+                                characterArray[mapToRange1To5(hero?.id ?? 0)]),
                             radius: 30,
                           ),
                           Padding(
@@ -182,19 +134,16 @@ class _FightingActionState extends State<FightingAction> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    character1 != null
-                                        ? character1!.name
-                                        : 'N/A',
+                                    hero != null ? hero!.name : 'N/A',
                                     style: TextStyle(fontSize: 26),
                                   ),
                                   LinearPercentIndicator(
                                     width: 100.0,
                                     lineHeight: 8.0,
                                     percent: 0.6,
-                                    leading:
-                                        Text("Lvl ${character1?.level ?? 0}"),
-                                    trailing: Text(
-                                        "Lvl ${(character1?.level ?? 0) + 1}"),
+                                    leading: Text("Lvl ${hero?.level ?? 0}"),
+                                    trailing:
+                                        Text("Lvl ${(hero?.level ?? 0) + 1}"),
                                     progressColor: Colors.orange,
                                   ),
                                 ],
@@ -205,23 +154,23 @@ class _FightingActionState extends State<FightingAction> {
                   ]),
                 ),
                 Text(
-                  'Level: ${character1 != null ? character1!.level : 'N/A'}, XP: ${character1 != null ? character1!.xp : 'N/A'}',
+                  'Level: ${hero != null ? hero!.level : 'N/A'}, XP: ${hero != null ? hero!.xp : 'N/A'}',
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
-                  'Health: ${character1 != null ? character1!.health : 'N/A'}, Armor: ${character1 != null ? character1!.armor : 'N/A'}',
+                  'Health: ${hero != null ? hero!.health : 'N/A'}, Armor: ${hero != null ? hero!.armor : 'N/A'}',
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
-                  'Attack: ${character1 != null ? character1!.attack : 'N/A'}, Crit: ${character1 != null ? character1!.criticalAttack : 'N/A'}',
+                  'Attack: ${hero != null ? hero!.attack : 'N/A'}, Crit: ${hero != null ? hero!.criticalAttack : 'N/A'}',
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
-                  'Luck: ${character1 != null ? character1!.luck : 'N/A'}, Balance: ${character1 != null ? character1!.balance : 'N/A'} \$',
+                  'Luck: ${hero != null ? hero!.luck : 'N/A'}, Balance: ${hero != null ? hero!.balance : 'N/A'} \$',
                   style: TextStyle(fontSize: 20),
                 ),
                 Padding(
-                  // Character2 avatar, Name, Healthbar padding.
+                  // Enemy avatar, Name, Healthbar padding.
                   padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: Stack(
                     children: [
@@ -232,7 +181,7 @@ class _FightingActionState extends State<FightingAction> {
                             radius: 40.0,
                             lineWidth: 13.0,
                             animation: false,
-                            percent: character2Hp >= 0 ? character2Hp / 100 : 0,
+                            percent: enemyHp >= 0 ? enemyHp / 100 : 0,
                             circularStrokeCap: CircularStrokeCap.round,
                             progressColor: Color.fromARGB(255, 144, 218, 146),
                             backgroundColor:
@@ -244,16 +193,14 @@ class _FightingActionState extends State<FightingAction> {
                             child: Row(
                               children: [
                                 CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage("assets/character1.png"),
+                                  backgroundImage: AssetImage(characterArray[
+                                      mapToRange1To5(enemy?.id ?? 0)]),
                                   radius: 30,
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(15),
                                   child: Text(
-                                    character2 != null
-                                        ? character2!.name
-                                        : 'N/A',
+                                    enemy != null ? enemy!.mob_name : 'N/A',
                                     style: TextStyle(fontSize: 26),
                                   ),
                                 ),
@@ -266,19 +213,19 @@ class _FightingActionState extends State<FightingAction> {
                   ),
                 ),
                 Text(
-                  'Level: ${character2 != null ? character2!.level : 'N/A'}, XP: ${character2 != null ? character2!.xp : 'N/A'}',
+                  'Level: ${enemy != null ? enemy!.level : 'N/A'}, XP: ${enemy != null ? enemy!.xp : 'N/A'}',
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
-                  'Health: ${character2 != null ? character2!.health : 'N/A'}, Armor: ${character2 != null ? character2!.armor : 'N/A'}',
+                  'Health: ${enemy != null ? enemy!.health : 'N/A'}, Armor: ${enemy != null ? enemy!.armor : 'N/A'}',
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
-                  'Attack: ${character2 != null ? character2!.attack : 'N/A'}, Crit: ${character2 != null ? character2!.criticalAttack : 'N/A'}',
+                  'Attack: ${enemy != null ? enemy!.attack : 'N/A'}, Crit: ${enemy != null ? enemy!.criticalAttack : 'N/A'}',
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
-                  'Luck: ${character2 != null ? character2!.luck : 'N/A'}, Balance: ${character2 != null ? character2!.balance : 'N/A'} \$',
+                  'Luck: ${enemy != null ? enemy!.luck : 'N/A'}, Balance: ${enemy != null ? enemy!.balance : 'N/A'} \$',
                   style: TextStyle(fontSize: 20),
                 ),
               ],
@@ -288,7 +235,10 @@ class _FightingActionState extends State<FightingAction> {
             child: FilledButton(
               onPressed: () {
                 if (!buttonIsDisabled) {
-                  fight();
+                  setState(() {
+                    initiateFight(
+                        selectedCharacterID, selectedEnemyID, 'attack');
+                  });
                 } else {
                   showDialog(
                     context: context,
@@ -299,14 +249,12 @@ class _FightingActionState extends State<FightingAction> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
-                              initCharacters();
                               Navigator.pop(context, 'New Game');
                             },
                             child: const Text('New Game'),
                           ),
                           TextButton(
                             onPressed: () {
-                              initCharacters();
                               Navigator.pop(context, 'OK');
                             },
                             child: const Text('OK'),
