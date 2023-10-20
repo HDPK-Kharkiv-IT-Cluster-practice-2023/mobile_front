@@ -85,42 +85,41 @@ class _NavigationExampleState extends State<NavigationExample> {
     }
   }
 
-  Future<void> createCharacter() async {
-    final url = 'http://${currentServer}/addcharacter';
-    final postData = {
-      'post': 'post',
-    };
+  // Future<void> createCharacter() async {
+  //   final url = 'http://${currentServer}/addcharacter';
+  //   final postData = {
+  //     'post': 'post',
+  //   };
 
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-    } catch (error) {
-      print('Network error during fight: $error');
-    }
-    await fetchData();
-    setState(() {});
-  }
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       body: postData,
+  //       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+  //     );
+  //   } catch (error) {
+  //     print('Network error during fight: $error');
+  //   }
+  //   await fetchData();
+  //   setState(() {});
+  // }
 
   Future<void> sendCharacterData({
     bool alive = true,
     required int armor,
     required int attack,
     int balance = 0,
-    required int criticalAttack,
+    int criticalAttack = 0,
     required int health,
     required int level,
     required int luck,
     required int maxHealth,
     required String name,
     bool playability = true,
-    int statPoints = 1,
     int xp = 0,
   }) async {
-    final apiUrl = Uri.parse(
-        'http://$currentServer/api/v1/character'); // Replace with your API endpoint
+    final apiUrl = Uri.parse('http://${currentServer}/api/v1/character');
+    // Replace with your API endpoint
     final characterData = {
       "alive": alive,
       "armor": armor,
@@ -133,7 +132,6 @@ class _NavigationExampleState extends State<NavigationExample> {
       "max_health": maxHealth,
       "name": name,
       "playability": playability,
-      "stat_points": statPoints,
       "xp": xp,
     };
 
@@ -295,80 +293,153 @@ class _NavigationExampleState extends State<NavigationExample> {
     );
   }
 
+  Future<int> getMaxStatPoints(int level) async {
+    final url = Uri.parse(
+        'http://${currentServer}/api/v1/character/max_stat_points/$level');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data['max_stat_points'];
+    } else {
+      throw Exception('Failed to fetch max_stat_points.');
+    }
+  }
+
   // Function to show an alert dialog with input fields for character parameters
   Future<void> sendCharacterDataDialog() async {
     final TextEditingController nameController = TextEditingController();
-    final TextEditingController healthController = TextEditingController();
-    final TextEditingController armorController = TextEditingController();
-    final TextEditingController attackController = TextEditingController();
-    final TextEditingController criticalAttackController =
-        TextEditingController();
-    final TextEditingController levelController = TextEditingController();
-    final TextEditingController luckController = TextEditingController();
-    final TextEditingController maxHealthController = TextEditingController();
+    double health = 1.0;
+    double armor = 1.0;
+    double attack = 1.0;
+    double level = 1.0;
+    double luck = 1.0;
+    double maxHealth = 1.0;
+
+    int maxStatPoints = 0;
+
+    Future<void> updateMaxStatPoints() async {
+      maxStatPoints = await getMaxStatPoints(level.toInt());
+    }
 
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Enter Character Parameters'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(labelText: 'Name')),
-                TextField(
-                    controller: healthController,
-                    decoration: InputDecoration(labelText: 'Health')),
-                TextField(
-                    controller: armorController,
-                    decoration: InputDecoration(labelText: 'Armor')),
-                TextField(
-                    controller: attackController,
-                    decoration: InputDecoration(labelText: 'Attack')),
-                TextField(
-                    controller: criticalAttackController,
-                    decoration: InputDecoration(labelText: 'Critical Attack')),
-                TextField(
-                    controller: levelController,
-                    decoration: InputDecoration(labelText: 'Level')),
-                TextField(
-                    controller: luckController,
-                    decoration: InputDecoration(labelText: 'Luck')),
-                TextField(
-                    controller: maxHealthController,
-                    decoration: InputDecoration(labelText: 'Max Health')),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Enter Character Parameters'),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(labelText: 'Name'),
+                    ),
+                    _buildSliderWithTitle('Health', health, (value) {
+                      setState(() {
+                        if (health + armor + value + luck + maxHealth <=
+                            maxStatPoints) {
+                          health = value;
+                        } else {
+                          // Handle error or display a message here
+                          // You can display a message like:
+                          // 'Total stat points cannot exceed $maxStatPoints'
+                        }
+                      });
+                    }),
+                    _buildSliderWithTitle('Armor', armor, (value) {
+                      setState(() {
+                        if (health + armor + value + luck + maxHealth <=
+                            maxStatPoints) {
+                          armor = value;
+                        } else {
+                          // Handle error or display a message here
+                        }
+                      });
+                    }),
+                    _buildSliderWithTitle('Attack', attack, (value) {
+                      setState(() {
+                        if (health + armor + value + luck + maxHealth <=
+                            maxStatPoints) {
+                          attack = value;
+                        } else {
+                          // Handle error or display a message here
+                        }
+                      });
+                    }),
+                    _buildSliderWithTitle('Level', level, (value) {
+                      setState(() {
+                        level = value;
+                      });
+                      updateMaxStatPoints();
+                    }),
+                    _buildSliderWithTitle('Luck', luck, (value) {
+                      setState(() {
+                        if (health + armor + value + luck + maxHealth <=
+                            maxStatPoints) {
+                          luck = value;
+                        } else {
+                          // Handle error or display a message here
+                        }
+                      });
+                    }),
+                    _buildSliderWithTitle('Max Health', maxHealth, (value) {
+                      setState(() {
+                        if (health + armor + value + luck + maxHealth <=
+                            maxStatPoints) {
+                          maxHealth = value;
+                        } else {
+                          // Handle error or display a message here
+                        }
+                      });
+                    }),
+                    Text('Max Stat Points: $maxStatPoints'),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    sendCharacterData(
+                      name: nameController.text,
+                      health: health.toInt(),
+                      armor: armor.toInt(),
+                      attack: attack.toInt(),
+                      level: level.toInt(),
+                      luck: luck.toInt(),
+                      maxHealth: maxHealth.toInt(),
+                    );
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                sendCharacterData(
-                  name: nameController.text,
-                  health: int.tryParse(healthController.text) ?? 0,
-                  armor: int.tryParse(armorController.text) ?? 0,
-                  attack: int.tryParse(attackController.text) ?? 0,
-                  criticalAttack:
-                      int.tryParse(criticalAttackController.text) ?? 0,
-                  level: int.tryParse(levelController.text) ?? 0,
-                  luck: int.tryParse(luckController.text) ?? 0,
-                  maxHealth: int.tryParse(maxHealthController.text) ?? 0,
-                );
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('OK'),
-            ),
-          ],
+            );
+          },
         );
       },
+    );
+  }
+
+  Widget _buildSliderWithTitle(
+      String title, double value, ValueChanged<double> onChanged) {
+    return Column(
+      children: [
+        Text('$title: ${value.toInt()}'),
+        Slider(
+          value: value,
+          onChanged: onChanged,
+          min: 0,
+          max: 100,
+        ),
+      ],
     );
   }
 }
