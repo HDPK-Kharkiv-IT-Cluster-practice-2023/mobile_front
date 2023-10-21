@@ -3,7 +3,7 @@ import 'dart:io';
 
 class Mob {
   int id;
-  String mob_name;
+  String mobName;
   int level;
   int xp;
   int maxHealth;
@@ -19,7 +19,7 @@ class Mob {
 
   Mob({
     required this.id,
-    required this.mob_name,
+    required this.mobName,
     required this.level,
     required this.xp,
     required this.maxHealth,
@@ -43,7 +43,7 @@ class Mob {
   factory Mob.fromJson(Map<String, dynamic> json) {
     return Mob(
         id: json['id'] ?? 'N/A',
-        mob_name: json['name'] ?? 'N/A',
+        mobName: json['mob_name'] ?? 'N/A',
         criticalAttack: json['criticalAttack'] as int? ?? 0,
         health: json['health'] as int? ?? 0,
         armor: json['armor'] as int? ?? 0,

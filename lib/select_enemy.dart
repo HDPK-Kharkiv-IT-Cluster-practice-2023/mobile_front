@@ -1,4 +1,3 @@
-import 'package:fightingapp/fighting_action.dart';
 import 'package:fightingapp/main.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -105,6 +104,43 @@ class _NavigationExampleState extends State<NavigationExample> {
     setState(() {});
   }
 
+  Future<void> sendCharacterData({
+    bool alive = true,
+    required int level,
+    bool playability = false,
+  }) async {
+    final apiUrl = Uri.parse('http://${currentServer}/api/v1/character');
+    final characterData = {
+      "alive": alive,
+      "level": level,
+      "playability": playability,
+    };
+
+    final headers = {
+      "Content-Type": "application/json",
+    };
+
+    try {
+      final response = await http.post(
+        apiUrl,
+        headers: headers,
+        body: json.encode(characterData),
+      );
+
+      if (response.statusCode == 200) {
+        print("Character data sent successfully.");
+        // You can handle the response here if needed.
+      } else {
+        print(
+            "Failed to send character data. Status code: ${response.statusCode}");
+        // Handle the error here.
+      }
+    } catch (e) {
+      print("Error sending character data: $e");
+      // Handle the exception here.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,7 +150,7 @@ class _NavigationExampleState extends State<NavigationExample> {
         actions: [
           IconButton(
             onPressed: () {
-              createEnemy();
+              sendCharacterData(level: 5);
             },
             icon: Icon(Icons.add),
             iconSize: 35,

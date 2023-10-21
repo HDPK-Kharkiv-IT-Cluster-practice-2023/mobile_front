@@ -18,20 +18,20 @@ class CharacterSelection extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
-      home: NavigationExample(),
+      home: CharacterSelect(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class NavigationExample extends StatefulWidget {
-  const NavigationExample({super.key});
+class CharacterSelect extends StatefulWidget {
+  const CharacterSelect({super.key});
 
   @override
-  State<NavigationExample> createState() => _NavigationExampleState();
+  State<CharacterSelect> createState() => _NavigationExampleState();
 }
 
-class _NavigationExampleState extends State<NavigationExample> {
+class _NavigationExampleState extends State<CharacterSelect> {
   List<Character> characters = [];
 
   @override

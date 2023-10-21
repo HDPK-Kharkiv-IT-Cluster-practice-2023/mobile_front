@@ -1,8 +1,10 @@
+import 'package:fightingapp/select_hero.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'fetch_character.dart';
 import 'package:http/http.dart' as http;
 import 'fetch_mob.dart';
+import 'select_hero.dart';
 
 class FightingMobs extends StatefulWidget {
   const FightingMobs({Key? key}) : super(key: key);
@@ -160,7 +162,7 @@ class _FightingMobsState extends State<FightingMobs> {
                                 Padding(
                                   padding: EdgeInsets.all(15),
                                   child: Text(
-                                    mob != null ? mob!.mob_name : 'N/A',
+                                    mob != null ? mob!.mobName : 'N/A',
                                     style: TextStyle(fontSize: 26),
                                   ),
                                 ),
@@ -205,7 +207,12 @@ class _FightingMobsState extends State<FightingMobs> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
-                              Navigator.pop(context, 'New Game');
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CharacterSelection(),
+                                  ));
                             },
                             child: const Text('New Game'),
                           ),

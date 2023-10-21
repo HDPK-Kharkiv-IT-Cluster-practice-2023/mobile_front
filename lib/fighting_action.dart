@@ -26,8 +26,8 @@ class _FightingActionState extends State<FightingAction> {
     super.initState();
 
     // Fetch the initial character data and set it to hero and enemy
-    initiateFight(selectedCharacterID, selectedEnemyID,
-        'attack'); // You should have a method to fetch the initial data.
+    loadFight(selectedCharacterID,
+        selectedEnemyID); // You should have a method to fetch the initial data.
   }
 
   List<String> characterArray = [
@@ -43,6 +43,26 @@ class _FightingActionState extends State<FightingAction> {
     // Use modulo to wrap the input within the range [1, 5]
     double mappedValue = (id - 1) % 5 + 1;
     return mappedValue.toInt();
+  }
+
+  void loadFight(int heroId, int enemyId) async {
+    final apiUrl = Uri.parse(
+        'http://$currentServer/api/v1/fight/$heroId/$enemyId?enemy_type=character');
+    final response = await http.get(apiUrl);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      setState(() {
+        hero = Character.fromJson(data['hero']);
+        enemy = Mob.fromJson(data['enemy']);
+      });
+
+      print('Load initiated successfully');
+    } else {
+      // Handle any errors
+      print('Failed to load fight. Status code: ${response.statusCode}');
+    }
   }
 
   void initiateFight(int heroId, int enemyId, String action) async {
@@ -74,7 +94,7 @@ class _FightingActionState extends State<FightingAction> {
     var buttonIsDisabled = false;
 
     if (hero != null && hero!.health <= 0) {
-      winner = enemy != null ? enemy!.mob_name : 'N/A';
+      winner = enemy != null ? enemy!.mobName : 'N/A';
       buttonIsDisabled = true;
     }
 
@@ -200,7 +220,7 @@ class _FightingActionState extends State<FightingAction> {
                                 Padding(
                                   padding: EdgeInsets.all(15),
                                   child: Text(
-                                    enemy != null ? enemy!.mob_name : 'N/A',
+                                    enemy != null ? enemy!.mobName : 'N/A',
                                     style: TextStyle(fontSize: 26),
                                   ),
                                 ),
@@ -249,7 +269,12 @@ class _FightingActionState extends State<FightingAction> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
-                              Navigator.pop(context, 'New Game');
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CharacterSelect(),
+                                  ));
                             },
                             child: const Text('New Game'),
                           ),
