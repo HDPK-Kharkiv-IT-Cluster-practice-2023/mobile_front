@@ -78,7 +78,20 @@ class _FightingActionState extends State<FightingAction> {
         enemy = Mob.fromJson(data['enemy']);
       });
 
-      print('Fight initiated successfully');
+      if (data['message'] == "You successfully escaped") {
+        // Navigate to CharacterSelect() screen
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => CharacterSelect()),
+        );
+      } else {
+        if (action == 'escape') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Could not escape...'),
+            ),
+          );
+        }
+      }
     } else {
       // Handle any errors
       print('Failed to initiate fight. Status code: ${response.statusCode}');
@@ -252,60 +265,83 @@ class _FightingActionState extends State<FightingAction> {
             ),
           ),
           Container(
-            child: FilledButton(
-              onPressed: () {
-                if (!buttonIsDisabled) {
-                  setState(() {
-                    initiateFight(
-                        selectedCharacterID, selectedEnemyID, 'attack');
-                  });
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('$winner wins'),
-                        content: const Text('The game is now over'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CharacterSelect(),
-                                  ));
-                            },
-                            child: const Text('New Game'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context, 'OK');
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: buttonIsDisabled
-                    ? const Color.fromARGB(255, 158, 158, 158)
-                    : Color.fromARGB(255, 253, 231, 255),
-              ),
-              child: Text(
-                buttonIsDisabled ? 'Game over' : 'Fight!',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: buttonIsDisabled
-                      ? Color.fromARGB(255, 255, 17, 0)
-                      : Colors.purple,
+              child: Row(
+            children: [
+              Spacer(),
+              Spacer(),
+              FilledButton(
+                onPressed: () {
+                  if (!buttonIsDisabled) {
+                    setState(() {
+                      initiateFight(
+                          selectedCharacterID, selectedEnemyID, 'attack');
+                    });
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('$winner wins'),
+                          content: const Text('The game is now over'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CharacterSelect(),
+                                    ));
+                              },
+                              child: const Text('New Game'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, 'OK');
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: buttonIsDisabled
+                      ? const Color.fromARGB(255, 158, 158, 158)
+                      : const Color.fromARGB(255, 253, 231, 255),
+                ),
+                child: Text(
+                  buttonIsDisabled ? 'Game over' : 'Fight!',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: buttonIsDisabled
+                        ? const Color.fromARGB(255, 255, 17, 0)
+                        : Colors.purple,
+                  ),
                 ),
               ),
-            ),
-          ),
+              FilledButton(
+                onPressed: () {
+                  if (!buttonIsDisabled) {
+                    initiateFight(
+                        selectedCharacterID, selectedEnemyID, 'escape');
+                  } else {}
+                },
+                child: Icon(
+                  Icons.run_circle,
+                  color: const Color.fromARGB(255, 253, 231, 255),
+                ),
+                style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    backgroundColor: !buttonIsDisabled
+                        ? Colors.red
+                        : const Color.fromARGB(255, 158, 158, 158)),
+              ),
+              Spacer()
+            ],
+          )),
         ],
       ),
     );

@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'fetch_character.dart';
 import 'main.dart';
+import 'dart:math';
+
+Random random = new Random();
 
 int selectedCharacterID = 0;
 
@@ -33,6 +36,12 @@ class CharacterSelect extends StatefulWidget {
 
 class _NavigationExampleState extends State<CharacterSelect> {
   List<Character> characters = [];
+
+  int mapToRange1To5(int id) {
+    // Use modulo to wrap the input within the range [1, 5]
+    double mappedValue = (id - 1) % 5 + 1;
+    return mappedValue.toInt();
+  }
 
   @override
   void initState() {
@@ -82,6 +91,52 @@ class _NavigationExampleState extends State<CharacterSelect> {
       setState(() {}); // Update the UI with the fetched data
     } else {
       print('Failed to fetch data. Status code: ${response.statusCode}');
+    }
+  }
+
+  Future<Character> fetchRandomCharacter() async {
+    final url = Uri.parse(
+        'http://$currentServer/api/v1/character/random/${random.nextInt(100)}/true');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final jsonMap = json.decode(response.body);
+
+        if (jsonMap.containsKey("generated_hero") &&
+            jsonMap["generated_hero"] is Map<String, dynamic>) {
+          final characterData = jsonMap["generated_hero"];
+
+          // Convert fields to the expected types
+          int parseToInt(String value) {
+            return int.tryParse(value) ?? 0;
+          }
+
+          return Character.fromJson({
+            "id": parseToInt(characterData["id"].toString()),
+            "name": characterData["name"],
+            "critical_attack":
+                parseToInt(characterData["critical_attack"].toString()),
+            "health": parseToInt(characterData["health"].toString()),
+            "armor": parseToInt(characterData["armor"].toString()),
+            "attack": parseToInt(characterData["attack"].toString()),
+            "luck": parseToInt(characterData["luck"].toString()),
+            "level": parseToInt(characterData["level"].toString()),
+            "xp": parseToInt(characterData["xp"].toString()),
+            "balance": parseToInt(characterData["balance"].toString()),
+            "alive": characterData["alive"] == "true",
+            "playability": characterData["playability"] == "true",
+            "maxHealth": parseToInt(characterData["max_health"].toString()),
+          });
+        } else {
+          throw Exception('Invalid JSON format');
+        }
+      } else {
+        throw Exception('Failed to load character data');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
     }
   }
 
@@ -160,12 +215,121 @@ class _NavigationExampleState extends State<CharacterSelect> {
     }
   }
 
+  void showHeroInfoDialog(BuildContext context) async {
+    Character randomizedCharacter = await fetchRandomCharacter();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            void regenerateCharacter() async {
+              Character newRandomCharacter = await fetchRandomCharacter();
+              setState(() {
+                randomizedCharacter = newRandomCharacter;
+              });
+            }
+
+            void createCharacter() async {
+              await sendCharacterData(
+                name: randomizedCharacter?.name ?? 'N/A',
+                health: randomizedCharacter?.health ?? 0,
+                armor: randomizedCharacter?.armor ?? 0,
+                attack: randomizedCharacter?.attack ?? 0,
+                level: randomizedCharacter?.level ?? 0,
+                luck: randomizedCharacter?.luck ?? 0,
+                maxHealth: randomizedCharacter?.maxHealth ?? 0,
+              );
+              Navigator.of(context).pop();
+            }
+
+            return AlertDialog(
+              title: Text('Hero Information'),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundImage:
+                                    AssetImage('assets/random.png'),
+                                radius: 30,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${randomizedCharacter != null ? randomizedCharacter!.name : 'N/A'}',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Level: ${randomizedCharacter != null ? randomizedCharacter!.level : 'N/A'}, XP: ${randomizedCharacter != null ? randomizedCharacter!.xp : 'N/A'}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Health: ${randomizedCharacter != null ? randomizedCharacter!.health : 'N/A'}, Armor: ${randomizedCharacter != null ? randomizedCharacter!.armor : 'N/A'}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Attack: ${randomizedCharacter != null ? randomizedCharacter!.attack : 'N/A'}, Crit: ${randomizedCharacter != null ? randomizedCharacter!.criticalAttack : 'N/A'}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      'Luck: ${randomizedCharacter != null ? randomizedCharacter!.luck : 'N/A'}, Balance: ${randomizedCharacter != null ? randomizedCharacter!.balance : 'N/A'} \$',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    createCharacter(); // Send character data to the server
+                  },
+                  child: Text('Create'),
+                ),
+                TextButton(
+                  onPressed: regenerateCharacter,
+                  child: Text('Regenerate'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Character selection'),
         elevation: 0.0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showHeroInfoDialog(context);
+            },
+            icon: Icon(Icons.casino),
+            iconSize: 35,
+          )
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: fetchData,
@@ -180,12 +344,6 @@ class _NavigationExampleState extends State<CharacterSelect> {
               }
 
               return character.xp / character.xpGoal;
-            }
-
-            int mapToRange1To5() {
-              // Use modulo to wrap the input within the range [1, 5]
-              double mappedValue = (character.id - 1) % 5 + 1;
-              return mappedValue.toInt();
             }
 
             return Card(
@@ -241,7 +399,8 @@ class _NavigationExampleState extends State<CharacterSelect> {
                                   children: [
                                     CircleAvatar(
                                       backgroundImage: AssetImage(
-                                          characterArray[mapToRange1To5()]),
+                                          characterArray[mapToRange1To5(
+                                              character.id ?? 0)]),
                                       radius: 30,
                                     ),
                                     Padding(
