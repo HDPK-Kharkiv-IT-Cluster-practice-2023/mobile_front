@@ -145,7 +145,11 @@ class _FightingActionState extends State<FightingAction> {
                         radius: 40.0,
                         lineWidth: 13.0,
                         animation: false,
-                        percent: heroHp >= 0 ? heroHp / 100 : 0,
+                        percent: heroHp >= 0
+                            ? heroHp > 100
+                                ? 1 // If character.health is greater than 100, set percent to 1 (equivalent to 100%)
+                                : heroHp / 100
+                            : 0,
                         circularStrokeCap: CircularStrokeCap.round,
                         progressColor: Color.fromARGB(255, 144, 218, 146),
                         backgroundColor:
@@ -214,7 +218,11 @@ class _FightingActionState extends State<FightingAction> {
                             radius: 40.0,
                             lineWidth: 13.0,
                             animation: false,
-                            percent: enemyHp >= 0 ? enemyHp / 100 : 0,
+                            percent: enemyHp >= 0
+                                ? enemyHp > 100
+                                    ? 1 // If character.health is greater than 100, set percent to 1 (equivalent to 100%)
+                                    : enemyHp / 100
+                                : 0,
                             circularStrokeCap: CircularStrokeCap.round,
                             progressColor: Color.fromARGB(255, 144, 218, 146),
                             backgroundColor:

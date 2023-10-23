@@ -44,7 +44,7 @@ class Mob {
     return Mob(
         id: json['id'] ?? 'N/A',
         mobName: json['mob_name'] ?? 'N/A',
-        criticalAttack: json['criticalAttack'] as int? ?? 0,
+        criticalAttack: json['critical_attack'] as int? ?? 0,
         health: json['health'] as int? ?? 0,
         armor: json['armor'] as int? ?? 0,
         attack: json['attack'] as int? ?? 0,

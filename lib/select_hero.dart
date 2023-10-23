@@ -116,7 +116,7 @@ class _NavigationExampleState extends State<CharacterSelect> {
           return Character.fromJson({
             "id": parseToInt(characterData["id"].toString()),
             "name": characterData["name"],
-            "critical_attack":
+            "criticalAttack":
                 parseToInt(characterData["critical_attack"].toString()),
             "health": parseToInt(characterData["health"].toString()),
             "armor": parseToInt(characterData["armor"].toString()),
@@ -140,31 +140,11 @@ class _NavigationExampleState extends State<CharacterSelect> {
     }
   }
 
-  // Future<void> createCharacter() async {
-  //   final url = 'http://${currentServer}/addcharacter';
-  //   final postData = {
-  //     'post': 'post',
-  //   };
-
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(url),
-  //       body: postData,
-  //       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-  //     );
-  //   } catch (error) {
-  //     print('Network error during fight: $error');
-  //   }
-  //   await fetchData();
-  //   setState(() {});
-  // }
-
   Future<void> sendCharacterData({
     bool alive = true,
     required int armor,
     required int attack,
     int balance = 0,
-    int criticalAttack = 0,
     required int health,
     required int level,
     required int luck,
@@ -180,7 +160,7 @@ class _NavigationExampleState extends State<CharacterSelect> {
       "armor": armor,
       "attack": attack,
       "balance": balance,
-      "critical_attack": criticalAttack,
+      "critical_attack": 2,
       "health": health,
       "level": level,
       "luck": luck,
@@ -383,7 +363,9 @@ class _NavigationExampleState extends State<CharacterSelect> {
                                   lineWidth: 13.0,
                                   animation: false,
                                   percent: character.health >= 0
-                                      ? character.health / 100
+                                      ? character.health > 100
+                                          ? 1 // If character.health is greater than 100, set percent to 1 (equivalent to 100%)
+                                          : character.health / 100
                                       : 0,
                                   circularStrokeCap: CircularStrokeCap.round,
                                   progressColor:
