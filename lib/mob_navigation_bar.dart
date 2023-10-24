@@ -6,8 +6,8 @@ import 'market.dart';
 import 'mob_fighting.dart';
 import 'settings.dart';
 
-class NavigationBarApp extends StatelessWidget {
-  const NavigationBarApp({super.key});
+class MobNavigationBarApp extends StatelessWidget {
+  const MobNavigationBarApp({super.key});
 
   @override
   Widget build(BuildContext context) {

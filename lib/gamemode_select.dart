@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'select_mob.dart';
 
 String enemy_type = '';
 
@@ -49,8 +50,7 @@ class GMSelector extends StatelessWidget {
                 enemy_type = 'mob';
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const MobNavigationExample()),
+                  MaterialPageRoute(builder: (context) => const MSelector()),
                 );
               },
               child: Card(
