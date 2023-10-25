@@ -1,9 +1,10 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:fightingapp/customicons.dart';
 import 'package:fightingapp/skills.dart';
 import 'package:flutter/material.dart';
 import 'fighting_action.dart';
 import 'market.dart';
-import 'mob_fighting.dart';
 import 'settings.dart';
 
 class NavigationBarApp extends StatelessWidget {

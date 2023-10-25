@@ -1,43 +1,44 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:fightingapp/select_hero.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-final String defaultServer = '127.0.0.1:5000';
+const String defaultServer = '127.0.0.1:5000';
 String currentServer = '127.0.0.1:5000';
 
-void main() => runApp(ServerSelection());
+void main() => runApp(const ServerSelection());
 
 class ServerSelection extends StatelessWidget {
-  const ServerSelection({Key? key});
+  const ServerSelection({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
-      home: Servers(),
+      home: const Servers(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class Servers extends StatefulWidget {
-  const Servers({Key? key});
+  const Servers({super.key});
 
   @override
   State<Servers> createState() => _ServersState();
 }
 
 Future<String> getStatus(String url) async {
-  await Future.delayed(Duration(milliseconds: 250));
+  await Future.delayed(const Duration(milliseconds: 250));
   try {
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data is Map<String, dynamic> && data.containsKey('status')) {
-        String status = data['status'];
         return 'OK';
       } else {
         // Handle the case where the response doesn't contain the expected 'status' key.
@@ -63,8 +64,8 @@ class _ServersState extends State<Servers> {
   void initState() {
     super.initState();
     controller = TextEditingController();
-    serverStatus = getStatus('http://${defaultServer}/api/v1/status');
-    customServerStatus = getStatus('http://${customServer}/api/v1/status');
+    serverStatus = getStatus('http://$defaultServer/api/v1/status');
+    customServerStatus = getStatus('http://$customServer/api/v1/status');
   }
 
   @override
@@ -91,7 +92,7 @@ class _ServersState extends State<Servers> {
           setState(() {
             serverStatus = getStatus('http://127.0.0.1:5000/api/v1/status');
             customServerStatus =
-                getStatus('http://${customServer}/api/v1/status');
+                getStatus('http://$customServer/api/v1/status');
           });
         },
         child: ListView(
@@ -117,24 +118,25 @@ class _ServersState extends State<Servers> {
                 child: Center(
                   child: Row(
                     children: [
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.all(15),
                         child: Icon(
                           Icons.dns,
                           size: 30,
                         ),
                       ),
-                      Text('Default server'),
-                      Spacer(),
+                      const Text('Default server'),
+                      const Spacer(),
                       FutureBuilder<String>(
                         future: serverStatus,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Icon(Icons.trip_origin,
+                            return const Icon(Icons.trip_origin,
                                 color: Colors.orange);
                           } else if (snapshot.hasError) {
-                            return Icon(Icons.trip_origin, color: Colors.red);
+                            return const Icon(Icons.trip_origin,
+                                color: Colors.red);
                           } else {
                             return Icon(Icons.trip_origin,
                                 color: snapshot.data == 'OK'
@@ -143,7 +145,7 @@ class _ServersState extends State<Servers> {
                           }
                         },
                       ),
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.all(15),
                         child: Icon(Icons.arrow_forward_ios),
                       ),
@@ -172,14 +174,14 @@ class _ServersState extends State<Servers> {
                   height: 100,
                   child: Row(
                     children: [
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.all(15),
                         child: Icon(
                           Icons.dns,
                           size: 30,
                         ),
                       ),
-                      Text('Custom server'),
+                      const Text('Custom server'),
                       TextButton(
                         onPressed: () => showDialog<String>(
                           context: context,
@@ -189,7 +191,7 @@ class _ServersState extends State<Servers> {
                               controller:
                                   controller, // Use the TextEditingController
                               obscureText: false,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: 'Server address',
                               ),
@@ -210,21 +212,22 @@ class _ServersState extends State<Servers> {
                             ],
                           ),
                         ),
-                        child: Icon(Icons.edit),
                         style: ElevatedButton.styleFrom(
-                          shape: CircleBorder(),
+                          shape: const CircleBorder(),
                         ),
+                        child: const Icon(Icons.edit),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       FutureBuilder<String>(
                         future: customServerStatus,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Icon(Icons.trip_origin,
+                            return const Icon(Icons.trip_origin,
                                 color: Colors.orange);
                           } else if (snapshot.hasError) {
-                            return Icon(Icons.trip_origin, color: Colors.red);
+                            return const Icon(Icons.trip_origin,
+                                color: Colors.red);
                           } else {
                             return Icon(Icons.trip_origin,
                                 color: snapshot.data == 'OK'
@@ -233,7 +236,7 @@ class _ServersState extends State<Servers> {
                           }
                         },
                       ),
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.all(15),
                         child: Icon(Icons.arrow_forward_ios),
                       ),

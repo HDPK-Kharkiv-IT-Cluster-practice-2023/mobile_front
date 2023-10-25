@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'fetch_character.dart';
@@ -79,13 +81,13 @@ class _FightingActionState extends State<FightingAction> {
       if (data['message'] == "You successfully escaped") {
         // Navigate to CharacterSelect() screen
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => CharacterSelect()),
+          MaterialPageRoute(builder: (context) => const CharacterSelect()),
         );
       } else {
         if (action == 'escape') {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Could not escape...'),
+            const SnackBar(
+              content: Text('Could not escape...'),
             ),
           );
         }
@@ -128,17 +130,17 @@ class _FightingActionState extends State<FightingAction> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
+            padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   // Hero avatar, Name, Healthbar padding.
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                   child: Stack(children: [
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 3, 0, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 3, 0, 0),
                       child: CircularPercentIndicator(
                         radius: 40.0,
                         lineWidth: 13.0,
@@ -149,13 +151,14 @@ class _FightingActionState extends State<FightingAction> {
                                 : heroHp / 100
                             : 0,
                         circularStrokeCap: CircularStrokeCap.round,
-                        progressColor: Color.fromARGB(255, 144, 218, 146),
+                        progressColor: const Color.fromARGB(255, 144, 218, 146),
                         backgroundColor:
                             const Color.fromARGB(255, 255, 151, 144),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
                       child: Row(
                         children: [
                           CircleAvatar(
@@ -164,13 +167,13 @@ class _FightingActionState extends State<FightingAction> {
                             radius: 30,
                           ),
                           Padding(
-                              padding: EdgeInsets.all(15),
+                              padding: const EdgeInsets.all(15),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     hero != null ? hero!.name : 'N/A',
-                                    style: TextStyle(fontSize: 26),
+                                    style: const TextStyle(fontSize: 26),
                                   ),
                                   LinearPercentIndicator(
                                     width: 100.0,
@@ -190,27 +193,28 @@ class _FightingActionState extends State<FightingAction> {
                 ),
                 Text(
                   'Level: ${hero != null ? hero!.level : 'N/A'}, XP: ${hero != null ? hero!.xp : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Health: ${hero != null ? hero!.health : 'N/A'}, Armor: ${hero != null ? hero!.armor : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Attack: ${hero != null ? hero!.attack : 'N/A'}, Crit: ${hero != null ? hero!.criticalAttack : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Luck: ${hero != null ? hero!.luck : 'N/A'}, Balance: ${hero != null ? hero!.balance : 'N/A'} \$',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Padding(
                   // Enemy avatar, Name, Healthbar padding.
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: Stack(
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                         child: Stack(children: [
                           CircularPercentIndicator(
                             radius: 40.0,
@@ -222,13 +226,14 @@ class _FightingActionState extends State<FightingAction> {
                                     : enemyHp / 100
                                 : 0,
                             circularStrokeCap: CircularStrokeCap.round,
-                            progressColor: Color.fromARGB(255, 144, 218, 146),
+                            progressColor:
+                                const Color.fromARGB(255, 144, 218, 146),
                             backgroundColor:
                                 const Color.fromARGB(255, 255, 151, 144),
                           ),
                           Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(10, 7, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                10, 7, 0, 0),
                             child: Row(
                               children: [
                                 CircleAvatar(
@@ -237,10 +242,10 @@ class _FightingActionState extends State<FightingAction> {
                                   radius: 30,
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(15),
+                                  padding: const EdgeInsets.all(15),
                                   child: Text(
                                     enemy != null ? enemy!.mobName : 'N/A',
-                                    style: TextStyle(fontSize: 26),
+                                    style: const TextStyle(fontSize: 26),
                                   ),
                                 ),
                               ],
@@ -253,28 +258,27 @@ class _FightingActionState extends State<FightingAction> {
                 ),
                 Text(
                   'Level: ${enemy != null ? enemy!.level : 'N/A'}, XP: ${enemy != null ? enemy!.xp : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Health: ${enemy != null ? enemy!.health : 'N/A'}, Armor: ${enemy != null ? enemy!.armor : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Attack: ${enemy != null ? enemy!.attack : 'N/A'}, Crit: ${enemy != null ? enemy!.criticalAttack : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Luck: ${enemy != null ? enemy!.luck : 'N/A'}, Balance: ${enemy != null ? enemy!.balance : 'N/A'} \$',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
               ],
             ),
           ),
-          Container(
-              child: Row(
+          Row(
             children: [
-              Spacer(),
-              Spacer(),
+              const Spacer(),
+              const Spacer(),
               FilledButton(
                 onPressed: () {
                   if (!buttonIsDisabled) {
@@ -335,19 +339,19 @@ class _FightingActionState extends State<FightingAction> {
                         selectedCharacterID, selectedEnemyID, 'escape');
                   } else {}
                 },
-                child: Icon(
-                  Icons.run_circle,
-                  color: const Color.fromARGB(255, 253, 231, 255),
-                ),
                 style: ElevatedButton.styleFrom(
-                    shape: CircleBorder(),
+                    shape: const CircleBorder(),
                     backgroundColor: !buttonIsDisabled
                         ? Colors.red
                         : const Color.fromARGB(255, 158, 158, 158)),
+                child: const Icon(
+                  Icons.run_circle,
+                  color: Color.fromARGB(255, 253, 231, 255),
+                ),
               ),
-              Spacer()
+              const Spacer()
             ],
-          )),
+          ),
         ],
       ),
     );

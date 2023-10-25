@@ -1,12 +1,11 @@
+// ignore_for_file: avoid_print, unused_element
+
 import 'package:fightingapp/main.dart';
-import 'package:fightingapp/mob_fighting.dart';
 import 'package:fightingapp/mob_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'fetch_character.dart';
-import 'fight_navigation_bar.dart';
 import 'dart:math';
 import 'fetch_mob.dart';
 import 'select_hero.dart';
@@ -22,7 +21,7 @@ class MSelector extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
-      home: MobSelect(),
+      home: const MobSelect(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -70,13 +69,13 @@ class _MobSelectState extends State<MobSelect> {
   }
 
   Future<void> fetchData() async {
-    final url = Uri.parse('http://${currentServer}/api/v1/mobs');
+    final url = Uri.parse('http://$currentServer/api/v1/mobs');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       // Parse the JSON response into a List<dynamic>
       List<dynamic> jsonList = json.decode(response.body);
-      await Future.delayed(Duration(milliseconds: 250));
+      await Future.delayed(const Duration(milliseconds: 250));
 
       // Parse the JSON data into a list of Character objects and update the class-level characters list
       mobs = jsonList.map((jsonCharacter) {
@@ -107,7 +106,7 @@ class _MobSelectState extends State<MobSelect> {
 
   Future<void> createMob() async {
     final apiUrl =
-        Uri.parse('http://${currentServer}/api/v1/mob/${selectedCharacterID}');
+        Uri.parse('http://$currentServer/api/v1/mob/$selectedCharacterID');
 
     final headers = {
       "Content-Type": "application/json",
@@ -144,7 +143,7 @@ class _MobSelectState extends State<MobSelect> {
             onPressed: () {
               createMob();
             },
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             iconSize: 35,
           )
         ],
@@ -182,7 +181,7 @@ class _MobSelectState extends State<MobSelect> {
                             Stack(
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0, 9, 0, 0),
                                   child: CircularPercentIndicator(
                                     radius: 40.0,
@@ -191,14 +190,14 @@ class _MobSelectState extends State<MobSelect> {
                                     percent:
                                         mob.health >= 0 ? mob.health / 100 : 0,
                                     circularStrokeCap: CircularStrokeCap.round,
-                                    progressColor:
-                                        Color.fromARGB(255, 144, 218, 146),
+                                    progressColor: const Color.fromARGB(
+                                        255, 144, 218, 146),
                                     backgroundColor: const Color.fromARGB(
                                         255, 255, 151, 144),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       10, 0, 0, 0),
                                   child: Row(
                                     children: [
@@ -208,14 +207,15 @@ class _MobSelectState extends State<MobSelect> {
                                         radius: 30,
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.all(15),
+                                        padding: const EdgeInsets.all(15),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               mob.mobName,
-                                              style: TextStyle(fontSize: 26),
+                                              style:
+                                                  const TextStyle(fontSize: 26),
                                             ),
                                             LinearPercentIndicator(
                                               width: 100.0,

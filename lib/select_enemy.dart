@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:fightingapp/main.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -18,7 +20,7 @@ class ESelector extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
-      home: NavigationExample(),
+      home: const NavigationExample(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -50,13 +52,13 @@ class _NavigationExampleState extends State<NavigationExample> {
   ];
 
   Future<void> fetchData() async {
-    final url = Uri.parse('http://${currentServer}/api/v1/characters/false');
+    final url = Uri.parse('http://$currentServer/api/v1/characters/false');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       // Parse the JSON response into a List<dynamic>
       List<dynamic> jsonList = json.decode(response.body);
-      await Future.delayed(Duration(milliseconds: 250));
+      await Future.delayed(const Duration(milliseconds: 250));
 
       // Parse the JSON data into a list of Character objects and update the class-level characters list
       characters = jsonList.map((jsonCharacter) {
@@ -86,18 +88,7 @@ class _NavigationExampleState extends State<NavigationExample> {
   }
 
   Future<void> createEnemy() async {
-    final url = 'http://${currentServer}/addenemy';
-    final postData = {
-      'post': 'post',
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-    } catch (error) {
+    try {} catch (error) {
       print('Network error during fight: $error');
     }
     await fetchData();
@@ -109,7 +100,7 @@ class _NavigationExampleState extends State<NavigationExample> {
     required int level,
     bool playability = false,
   }) async {
-    final apiUrl = Uri.parse('http://${currentServer}/api/v1/character');
+    final apiUrl = Uri.parse('http://$currentServer/api/v1/character');
     final characterData = {
       "alive": alive,
       "level": level,
@@ -152,7 +143,7 @@ class _NavigationExampleState extends State<NavigationExample> {
             onPressed: () {
               sendCharacterData(level: 5);
             },
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             iconSize: 35,
           )
         ],
@@ -190,7 +181,7 @@ class _NavigationExampleState extends State<NavigationExample> {
                             Stack(
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0, 9, 0, 0),
                                   child: CircularPercentIndicator(
                                     radius: 40.0,
@@ -200,14 +191,14 @@ class _NavigationExampleState extends State<NavigationExample> {
                                         ? character.health / 100
                                         : 0,
                                     circularStrokeCap: CircularStrokeCap.round,
-                                    progressColor:
-                                        Color.fromARGB(255, 144, 218, 146),
+                                    progressColor: const Color.fromARGB(
+                                        255, 144, 218, 146),
                                     backgroundColor: const Color.fromARGB(
                                         255, 255, 151, 144),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       10, 0, 0, 0),
                                   child: Row(
                                     children: [
@@ -217,14 +208,15 @@ class _NavigationExampleState extends State<NavigationExample> {
                                         radius: 30,
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.all(15),
+                                        padding: const EdgeInsets.all(15),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               character.name,
-                                              style: TextStyle(fontSize: 26),
+                                              style:
+                                                  const TextStyle(fontSize: 26),
                                             ),
                                             LinearPercentIndicator(
                                               width: 100.0,

@@ -1,10 +1,7 @@
-import 'package:fightingapp/gamemode_select.dart';
-import 'package:fightingapp/mob_navigation_bar.dart';
+// ignore_for_file: non_constant_identifier_names, avoid_print
+
 import 'package:fightingapp/select_enemy.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'select_mob.dart';
 
 String enemy_type = '';
@@ -13,18 +10,7 @@ class GMSelector extends StatelessWidget {
   const GMSelector({super.key});
 
   Future<void> selectMode(int index) async {
-    final url = 'http://127.0.0.1:5000/selectmode';
-    final postData = {
-      'post': index.toString(),
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        body: postData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      );
-    } catch (error) {
+    try {} catch (error) {
       print('Network error during fight: $error');
     }
   }
@@ -53,7 +39,7 @@ class GMSelector extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const MSelector()),
                 );
               },
-              child: Card(
+              child: const Card(
                 color: Colors.green,
                 child: SizedBox(
                   width: 300,
@@ -70,7 +56,7 @@ class GMSelector extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const ESelector()),
                 );
               },
-              child: Card(
+              child: const Card(
                 color: Colors.red,
                 child: SizedBox(
                   width: 300,

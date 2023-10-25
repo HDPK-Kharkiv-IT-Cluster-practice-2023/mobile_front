@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, unnecessary_null_comparison, avoid_print
+
 import 'package:fightingapp/gamemode_select.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -7,6 +9,7 @@ import 'fetch_character.dart';
 import 'main.dart';
 import 'dart:math';
 
+// ignore: unnecessary_new
 Random random = new Random();
 
 int selectedCharacterID = 0;
@@ -21,7 +24,7 @@ class CharacterSelection extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
-      home: CharacterSelect(),
+      home: const CharacterSelect(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -59,13 +62,13 @@ class _NavigationExampleState extends State<CharacterSelect> {
   ];
 
   Future<void> fetchData() async {
-    final url = Uri.parse('http://${currentServer}/api/v1/characters/true');
+    final url = Uri.parse('http://$currentServer/api/v1/characters/true');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       // Parse the JSON response into a List<dynamic>
       List<dynamic> jsonList = json.decode(response.body);
-      await Future.delayed(Duration(milliseconds: 250));
+      await Future.delayed(const Duration(milliseconds: 250));
 
       // Parse the JSON data into a list of Character objects and update the class-level characters list
       characters = jsonList.map((jsonCharacter) {
@@ -153,7 +156,7 @@ class _NavigationExampleState extends State<CharacterSelect> {
     bool playability = true,
     int xp = 0,
   }) async {
-    final apiUrl = Uri.parse('http://${currentServer}/api/v1/character');
+    final apiUrl = Uri.parse('http://$currentServer/api/v1/character');
     // Replace with your API endpoint
     final characterData = {
       "alive": alive,
@@ -212,19 +215,19 @@ class _NavigationExampleState extends State<CharacterSelect> {
 
             void createCharacter() async {
               await sendCharacterData(
-                name: randomizedCharacter?.name ?? 'N/A',
-                health: randomizedCharacter?.health ?? 0,
-                armor: randomizedCharacter?.armor ?? 0,
-                attack: randomizedCharacter?.attack ?? 0,
-                level: randomizedCharacter?.level ?? 0,
-                luck: randomizedCharacter?.luck ?? 0,
-                maxHealth: randomizedCharacter?.maxHealth ?? 0,
+                name: randomizedCharacter.name,
+                health: randomizedCharacter.health,
+                armor: randomizedCharacter.armor,
+                attack: randomizedCharacter.attack,
+                level: randomizedCharacter.level,
+                luck: randomizedCharacter.luck,
+                maxHealth: randomizedCharacter.maxHealth,
               );
               Navigator.of(context).pop();
             }
 
             return AlertDialog(
-              title: Text('Hero Information'),
+              title: const Text('Hero Information'),
               content: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,22 +235,25 @@ class _NavigationExampleState extends State<CharacterSelect> {
                     Stack(
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
+                          padding:
+                              const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 10),
                           child: Row(
                             children: [
-                              CircleAvatar(
+                              const CircleAvatar(
                                 backgroundImage:
                                     AssetImage('assets/random.png'),
                                 radius: 30,
                               ),
                               Padding(
-                                padding: EdgeInsets.all(15),
+                                padding: const EdgeInsets.all(15),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '${randomizedCharacter != null ? randomizedCharacter!.name : 'N/A'}',
-                                      style: TextStyle(fontSize: 16),
+                                      randomizedCharacter != null
+                                          ? randomizedCharacter.name
+                                          : 'N/A',
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ],
                                 ),
@@ -258,20 +264,20 @@ class _NavigationExampleState extends State<CharacterSelect> {
                       ],
                     ),
                     Text(
-                      'Level: ${randomizedCharacter != null ? randomizedCharacter!.level : 'N/A'}, XP: ${randomizedCharacter != null ? randomizedCharacter!.xp : 'N/A'}',
-                      style: TextStyle(fontSize: 16),
+                      'Level: ${randomizedCharacter != null ? randomizedCharacter.level : 'N/A'}, XP: ${randomizedCharacter != null ? randomizedCharacter.xp : 'N/A'}',
+                      style: const TextStyle(fontSize: 16),
                     ),
                     Text(
-                      'Health: ${randomizedCharacter != null ? randomizedCharacter!.health : 'N/A'}, Armor: ${randomizedCharacter != null ? randomizedCharacter!.armor : 'N/A'}',
-                      style: TextStyle(fontSize: 16),
+                      'Health: ${randomizedCharacter != null ? randomizedCharacter.health : 'N/A'}, Armor: ${randomizedCharacter != null ? randomizedCharacter.armor : 'N/A'}',
+                      style: const TextStyle(fontSize: 16),
                     ),
                     Text(
-                      'Attack: ${randomizedCharacter != null ? randomizedCharacter!.attack : 'N/A'}, Crit: ${randomizedCharacter != null ? randomizedCharacter!.criticalAttack : 'N/A'}',
-                      style: TextStyle(fontSize: 16),
+                      'Attack: ${randomizedCharacter != null ? randomizedCharacter.attack : 'N/A'}, Crit: ${randomizedCharacter != null ? randomizedCharacter.criticalAttack : 'N/A'}',
+                      style: const TextStyle(fontSize: 16),
                     ),
                     Text(
-                      'Luck: ${randomizedCharacter != null ? randomizedCharacter!.luck : 'N/A'}, Balance: ${randomizedCharacter != null ? randomizedCharacter!.balance : 'N/A'} \$',
-                      style: TextStyle(fontSize: 16),
+                      'Luck: ${randomizedCharacter != null ? randomizedCharacter.luck : 'N/A'}, Balance: ${randomizedCharacter != null ? randomizedCharacter.balance : 'N/A'} \$',
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ],
                 ),
@@ -281,11 +287,11 @@ class _NavigationExampleState extends State<CharacterSelect> {
                   onPressed: () {
                     createCharacter(); // Send character data to the server
                   },
-                  child: Text('Create'),
+                  child: const Text('Create'),
                 ),
                 TextButton(
                   onPressed: regenerateCharacter,
-                  child: Text('Regenerate'),
+                  child: const Text('Regenerate'),
                 ),
               ],
             );
@@ -306,7 +312,7 @@ class _NavigationExampleState extends State<CharacterSelect> {
             onPressed: () {
               showHeroInfoDialog(context);
             },
-            icon: Icon(Icons.casino),
+            icon: const Icon(Icons.casino),
             iconSize: 35,
           )
         ],
@@ -333,7 +339,7 @@ class _NavigationExampleState extends State<CharacterSelect> {
                 child: Stack(
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(15),
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: FilledButton(
@@ -346,7 +352,7 @@ class _NavigationExampleState extends State<CharacterSelect> {
                               ),
                             );
                           },
-                          child: Icon(Icons.play_arrow),
+                          child: const Icon(Icons.play_arrow),
                         ),
                       ),
                     ),
@@ -356,8 +362,8 @@ class _NavigationExampleState extends State<CharacterSelect> {
                           Stack(
                             children: [
                               Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 9, 0, 0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    0, 9, 0, 0),
                                 child: CircularPercentIndicator(
                                   radius: 40.0,
                                   lineWidth: 13.0,
@@ -369,31 +375,32 @@ class _NavigationExampleState extends State<CharacterSelect> {
                                       : 0,
                                   circularStrokeCap: CircularStrokeCap.round,
                                   progressColor:
-                                      Color.fromARGB(255, 144, 218, 146),
+                                      const Color.fromARGB(255, 144, 218, 146),
                                   backgroundColor:
                                       const Color.fromARGB(255, 255, 151, 144),
                                 ),
                               ),
                               Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    10, 0, 0, 0),
                                 child: Row(
                                   children: [
                                     CircleAvatar(
                                       backgroundImage: AssetImage(
-                                          characterArray[mapToRange1To5(
-                                              character.id ?? 0)]),
+                                          characterArray[
+                                              mapToRange1To5(character.id)]),
                                       radius: 30,
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.all(15),
+                                      padding: const EdgeInsets.all(15),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             character.name,
-                                            style: TextStyle(fontSize: 26),
+                                            style:
+                                                const TextStyle(fontSize: 26),
                                           ),
                                           LinearPercentIndicator(
                                             width: 100.0,
@@ -427,8 +434,8 @@ class _NavigationExampleState extends State<CharacterSelect> {
         onPressed: () {
           sendCharacterDataDialog();
         },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.blue, // Customize the button color
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add), // Customize the button color
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
     );
@@ -436,7 +443,7 @@ class _NavigationExampleState extends State<CharacterSelect> {
 
   Future<int> getMaxStatPoints(int level) async {
     final url = Uri.parse(
-        'http://${currentServer}/api/v1/character/max_stat_points/$level');
+        'http://$currentServer/api/v1/character/max_stat_points/$level');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -469,13 +476,13 @@ class _NavigationExampleState extends State<CharacterSelect> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('Enter Character Parameters'),
+              title: const Text('Enter Character Parameters'),
               content: SingleChildScrollView(
                 child: Column(
                   children: [
                     TextField(
                       controller: nameController,
-                      decoration: InputDecoration(labelText: 'Name'),
+                      decoration: const InputDecoration(labelText: 'Name'),
                     ),
                     _buildSliderWithTitle('Health', health, (value) {
                       setState(() {
@@ -544,7 +551,7 @@ class _NavigationExampleState extends State<CharacterSelect> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () {
@@ -559,7 +566,7 @@ class _NavigationExampleState extends State<CharacterSelect> {
                     );
                     Navigator.of(context).pop();
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             );

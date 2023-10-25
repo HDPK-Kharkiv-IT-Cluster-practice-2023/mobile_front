@@ -1,7 +1,6 @@
 import 'package:fightingapp/customicons.dart';
 import 'package:fightingapp/skills.dart';
 import 'package:flutter/material.dart';
-import 'fighting_action.dart';
 import 'market.dart';
 import 'mob_fighting.dart';
 import 'settings.dart';
@@ -15,7 +14,7 @@ class MobNavigationBarApp extends StatelessWidget {
       theme: ThemeData.light(useMaterial3: true),
       darkTheme: ThemeData.dark(useMaterial3: true),
 
-      home: MobNavigationExample(),
+      home: const MobNavigationExample(),
       debugShowCheckedModeBanner: false, // Set this to false
     );
   }

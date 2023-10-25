@@ -1,4 +1,5 @@
-import 'package:fightingapp/select_enemy.dart';
+// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously
+
 import 'package:fightingapp/select_hero.dart';
 import 'package:fightingapp/select_mob.dart';
 import 'package:flutter/material.dart';
@@ -62,13 +63,13 @@ class _FightingMobsState extends State<FightingMobs> {
       if (data['message'] == "You successfully escaped") {
         // Navigate to CharacterSelect() screen
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => CharacterSelect()),
+          MaterialPageRoute(builder: (context) => const CharacterSelect()),
         );
       } else {
         if (action == 'escape') {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Could not escape...'),
+            const SnackBar(
+              content: Text('Could not escape...'),
             ),
           );
         }
@@ -144,29 +145,33 @@ class _FightingMobsState extends State<FightingMobs> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
+            padding: const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 5),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 10),
                   child: Stack(
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 3, 0, 0),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 3, 0, 0),
                         child: CircularPercentIndicator(
                           radius: 40.0,
                           lineWidth: 13.0,
                           animation: false,
                           percent: heroHp >= 0 ? heroHp / 100 : 0,
                           circularStrokeCap: CircularStrokeCap.round,
-                          progressColor: Color.fromARGB(255, 144, 218, 146),
-                          backgroundColor: Color.fromARGB(255, 255, 151, 144),
+                          progressColor:
+                              const Color.fromARGB(255, 144, 218, 146),
+                          backgroundColor:
+                              const Color.fromARGB(255, 255, 151, 144),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
                         child: Row(
                           children: [
                             CircleAvatar(
@@ -176,13 +181,13 @@ class _FightingMobsState extends State<FightingMobs> {
                               radius: 30,
                             ),
                             Padding(
-                              padding: EdgeInsets.all(15),
+                              padding: const EdgeInsets.all(15),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     hero != null ? hero!.name : 'N/A',
-                                    style: TextStyle(fontSize: 26),
+                                    style: const TextStyle(fontSize: 26),
                                   ),
                                   LinearPercentIndicator(
                                     width: 100.0,
@@ -204,26 +209,27 @@ class _FightingMobsState extends State<FightingMobs> {
                 ),
                 Text(
                   'Level: ${hero != null ? hero!.level : 'N/A'}, XP: ${hero != null ? hero!.xp : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Health: ${hero != null ? hero!.health : 'N/A'}, Armor: ${hero != null ? hero!.armor : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Attack: ${hero != null ? hero!.attack : 'N/A'}, Crit: ${hero != null ? hero!.criticalAttack : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Luck: ${hero != null ? hero!.luck : 'N/A'}, Balance: ${hero != null ? hero!.balance : 'N/A'} \$',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                   child: Stack(
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 15),
                         child: Stack(
                           children: [
                             CircularPercentIndicator(
@@ -232,13 +238,14 @@ class _FightingMobsState extends State<FightingMobs> {
                               animation: false,
                               percent: mobHp >= 0 ? mobHp / 100 : 0,
                               circularStrokeCap: CircularStrokeCap.round,
-                              progressColor: Color.fromARGB(255, 144, 218, 146),
+                              progressColor:
+                                  const Color.fromARGB(255, 144, 218, 146),
                               backgroundColor:
-                                  Color.fromARGB(255, 255, 151, 144),
+                                  const Color.fromARGB(255, 255, 151, 144),
                             ),
                             Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(10, 7, 0, 0),
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  10, 7, 0, 0),
                               child: Row(
                                 children: [
                                   CircleAvatar(
@@ -247,10 +254,10 @@ class _FightingMobsState extends State<FightingMobs> {
                                     radius: 30,
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(15),
+                                    padding: const EdgeInsets.all(15),
                                     child: Text(
                                       mob != null ? mob!.mobName : 'N/A',
-                                      style: TextStyle(fontSize: 26),
+                                      style: const TextStyle(fontSize: 26),
                                     ),
                                   ),
                                 ],
@@ -264,97 +271,93 @@ class _FightingMobsState extends State<FightingMobs> {
                 ),
                 Text(
                   'Level: ${mob != null ? mob!.level : 'N/A'}, XP: ${mob != null ? mob!.xp : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Health: ${mob != null ? mob!.health : 'N/A'}, Armor: ${mob != null ? mob!.armor : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Attack: ${mob != null ? mob!.attack : 'N/A'}, Crit: ${mob != null ? mob!.criticalAttack : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
                 Text(
                   'Luck: ${mob != null ? mob!.luck : 'N/A'}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
               ],
             ),
           ),
-          Container(
-            child: Row(
-              children: [
-                Spacer(),
-                Spacer(),
-                FilledButton(
-                  onPressed: () {
-                    if (!buttonIsDisabled) {
-                      initiateFight(
-                          selectedCharacterID, selectedMobID, 'attack');
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text(winner),
-                            content: const Text('The game is now over'),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const CharacterSelect(),
-                                    ),
-                                  );
-                                },
-                                child: const Text('New Game'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context, 'OK');
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: buttonIsDisabled
-                        ? const Color.fromARGB(255, 158, 158, 158)
-                        : Color.fromARGB(255, 191, 254, 207),
-                  ),
-                  child: Text(
-                    buttonIsDisabled ? 'Game over' : 'Fight!',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: buttonIsDisabled
-                          ? Color.fromARGB(255, 255, 17, 0)
-                          : Color.fromARGB(255, 55, 133, 58),
-                    ),
+          Row(
+            children: [
+              const Spacer(),
+              const Spacer(),
+              FilledButton(
+                onPressed: () {
+                  if (!buttonIsDisabled) {
+                    initiateFight(selectedCharacterID, selectedMobID, 'attack');
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(winner),
+                          content: const Text('The game is now over'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CharacterSelect(),
+                                  ),
+                                );
+                              },
+                              child: const Text('New Game'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, 'OK');
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: buttonIsDisabled
+                      ? const Color.fromARGB(255, 158, 158, 158)
+                      : const Color.fromARGB(255, 191, 254, 207),
+                ),
+                child: Text(
+                  buttonIsDisabled ? 'Game over' : 'Fight!',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: buttonIsDisabled
+                        ? const Color.fromARGB(255, 255, 17, 0)
+                        : const Color.fromARGB(255, 55, 133, 58),
                   ),
                 ),
-                FilledButton(
-                  onPressed: () {
-                    if (!buttonIsDisabled) {
-                      initiateFight(
-                          selectedCharacterID, selectedMobID, 'escape');
-                    }
-                  },
-                  child: Icon(Icons.run_circle,
-                      color: Color.fromARGB(255, 255, 17, 0)),
-                  style: ElevatedButton.styleFrom(
-                    shape: CircleBorder(),
-                    backgroundColor: Color.fromARGB(255, 76, 227, 81),
-                  ),
+              ),
+              FilledButton(
+                onPressed: () {
+                  if (!buttonIsDisabled) {
+                    initiateFight(selectedCharacterID, selectedMobID, 'escape');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(),
+                  backgroundColor: const Color.fromARGB(255, 76, 227, 81),
                 ),
-                Spacer(),
-              ],
-            ),
+                child: const Icon(Icons.run_circle,
+                    color: Color.fromARGB(255, 255, 17, 0)),
+              ),
+              const Spacer(),
+            ],
           ),
         ],
       ),

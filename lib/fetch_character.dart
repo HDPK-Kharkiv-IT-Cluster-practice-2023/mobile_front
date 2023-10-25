@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
-final character1Url = 'http://127.0.0.1:5000/character';
-final character2Url = 'http://127.0.0.1:5000/enemy';
+const character1Url = 'http://127.0.0.1:5000/character';
+const character2Url = 'http://127.0.0.1:5000/enemy';
 
 class Character {
   int id;
