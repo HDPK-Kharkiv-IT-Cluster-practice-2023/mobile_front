@@ -405,9 +405,10 @@ class _NavigationExampleState extends State<CharacterSelect> {
                                           LinearPercentIndicator(
                                             width: 100.0,
                                             lineHeight: 8.0,
-                                            percent: calculatePercentage() >= 0
-                                                ? character.health / 100
-                                                : 0,
+                                            percent:
+                                                calculatePercentage() >= 1.0
+                                                    ? 1.0
+                                                    : calculatePercentage(),
                                             leading:
                                                 Text("Lvl ${character.level}"),
                                             trailing: Text(

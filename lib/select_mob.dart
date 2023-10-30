@@ -220,7 +220,10 @@ class _MobSelectState extends State<MobSelect> {
                                             LinearPercentIndicator(
                                               width: 100.0,
                                               lineHeight: 8.0,
-                                              percent: calculatePercentage(),
+                                              percent:
+                                                  calculatePercentage() >= 1.0
+                                                      ? 1.0
+                                                      : calculatePercentage(),
                                               leading: Text("Lvl ${mob.level}"),
                                               trailing:
                                                   Text("Lvl ${mob.level + 1}"),
