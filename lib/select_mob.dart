@@ -108,14 +108,9 @@ class _MobSelectState extends State<MobSelect> {
     final apiUrl =
         Uri.parse('http://$currentServer/api/v1/mob/$selectedCharacterID');
 
-    final headers = {
-      "Content-Type": "application/json",
-    };
-
     try {
       final response = await http.post(
         apiUrl,
-        headers: headers,
       );
 
       if (response.statusCode == 200) {
